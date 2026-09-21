@@ -1,172 +1,111 @@
 # COLLEGO
-COLLEGO is a mobile-friendly web app that puts college life in one place: attendance, timetables, notes and college search. Organizers post hackathons for admin approval, students register and get downloadable tickets, and organizers see who signed up while the admin sees only the count.
-# COLLEGO
 
 **Your entire college life. One app.**
 
-COLLEGO is a mobile-friendly web app for college students. Its working features are a hackathon and event system with three account types (student, organizer and admin) and a college directory with reviews. The whole app is one HTML file.
+## Problem Statement
+
+Students, event organizers and college admins need one place to publish events, get them approved, discover them, register for them and look up college details. COLLEGO solves this with a single app that has separate flows for students, organizers and admins.
+
+## Project Description
+
+COLLEGO is a mobile-first web app built as a single HTML file. It has three roles: **Student**, **Organizer** and **Admin**.
+
+**How it works**
+
+1. An **organizer** creates an account and creates an event (name, description, date, time, deadline, venue, college, free or paid fee). The event is sent to the admin for approval.
+2. The **admin** reviews the event and either approves it, which makes it live for students, or rejects it with a written reason that goes to the organizer as feedback.
+3. **Students** see live events on their home screen and on the *Hackathons and events* page. They register through a form covering personal details, college details, individual or team participation, food preference and consent. Paid events also ask for a transaction ID and payment screenshot.
+4. After registering, the student gets an event **ticket** that can be downloaded as an image and found again under *My tickets*.
+5. Organizers can see who registered for their events, and admins can see registration counts.
+
+**Features**
+
+- Student sign-up and sign-in with a Gmail check (prototype) and password reset
+- Separate organizer sign-up/sign-in and admin sign-in
+- Event approval workflow with rejection feedback
+- Live events on the student home screen, with deadline and fee
+- Event registration form with team support and a payment step (dummy payment QR code)
+- Ticket generated on a canvas and downloadable as a PNG
+- Explore colleges: search a list of engineering colleges, view details (place, university, type, courses, website, about) and add star ratings and reviews
+- Admin can add and edit college details
+- In-app notifications for event approvals, rejections, new events to review and new registrations
+- Light and dark theme
+- Passwords stored as SHA-256 hashes instead of plain text
+- Optional cloud sync through Firebase Realtime Database so data is shared across devices
 
 ---
 
-## Accounts
+## Google AI Usage
 
-| Role | What they can do |
-| --- | --- |
-| **Student** | Sign up, browse events approved by the admin, register for an event, get a downloadable ticket, search colleges, review events and colleges |
-| **Organizer** | Create an account with a club or organization name, send events to the admin for approval, edit and resubmit rejected events, see the details of every student who registered, search colleges |
-| **Admin** | Review events sent by organizers, approve them or reject them with a written reason, see the number of students registered for each live event, add and edit colleges |
+### Tools / Models Used
 
-The organizer sees each registered student's details. The admin sees only the number of registrations.
+- [Add the Google AI tool or model you used here]
 
----
+## Tech Stack used
 
-## How an event moves through the app
+- HTML5
+- CSS3 (custom properties, light and dark theme)
+- Vanilla JavaScript
+- Canvas API (ticket and payment QR drawing)
+- Browser `localStorage` (default data storage)
+- Firebase Realtime Database over REST (optional cloud sync)
+- Google Fonts (Figtree, Manrope)
 
-1. The organizer fills in the event details and clicks **Send to admin for approval**.
-2. The event shows as pending. The admin gets a "New event to review" notification.
-3. The admin opens the event and clicks **Approve**, or **Reject** with a reason.
-4. If rejected, the organizer sees the reason, clicks **Edit and resubmit**, and sends it again.
-5. If approved, the event goes live and students can see it on **Hackathons and events** until the registration deadline.
-6. The student registers and receives a ticket.
-7. The organizer is notified and sees the student under **Participants**. The admin's registration count goes up.
+### How Google AI Was Used
 
-### What the organizer enters
-
-Event name, about the event (optional), event date, event time (optional), registration deadline, venue, the college conducting the event (optional, with a search box that suggests colleges), and a registration fee (free, or paid with an amount).
+[Explain here how Google AI was used in your project.]
 
 ---
 
-## Student sign-up and sign-in
+### GitHub repo link of the project
 
-1. Choose **Continue with college email** and enter a Gmail address.
-2. A new student then creates an account: full name, phone number, college name, course and branch, year of study, university register number, email, password and password confirmation.
-3. A returning student enters their password instead.
+[Link of the github repository](https://github.com/your_user_name/your_repo_name)
 
-## Event registration form
+## Proof of Google AI Usage
 
-| Field | Notes |
-| --- | --- |
-| Full name | Required |
-| Email address | Required |
-| Phone / WhatsApp number | Required |
-| College name | Required |
-| Department and year of study | Required |
-| College ID or roll number | Required |
-| ID card upload | Optional |
-| Taking part alone or as a team | Individual or Team. A team needs a team name and team members' details |
-| Food preference | Veg or Non-Veg, required |
-| Payment | Shown only when the event has a fee: a QR code, a transaction ID and a payment screenshot, all required |
-| Consent | Tick box to accept the rules and code of conduct, required |
+Add your proof in the `/proofs` folder.
 
-Registration closes after the event's deadline.
+## Screenshots
 
-## Ticket
-
-After registering, the student gets a ticket showing:
-
-- Event name and host
-- Attendee name, date, venue and time
-- College, department and year, ID or roll number
-- Team (or Individual) and food preference
-- Payment (fee and transaction ID) or "Free entry"
-- Ticket ID, a QR-style pattern and the registration date
-
-The ticket can be downloaded as a PNG image, and it appears under **My tickets** on the events screen.
+Add project screenshots in the `/screenshots` folder.
 
 ---
 
-## Colleges
+## Demo Video
 
-- The admin adds colleges and edits them: name, place and district, university, type of college, courses offered, website (optional) and about.
-- Students, organizers and the admin can search the college list.
-- Students can write a review for a college or an event.
-
-## Home screen (student)
-
-Sections for Your college, Explore other colleges, Hackathons and events, Attendance calculator, Exam timetable, Exam resources and Notes, plus Reminders and Suggested for you.
-
-## Notifications
-
-Students, organizers and the admin have a notification screen.
-
-- **Student:** live events they have not registered for yet
-- **Organizer:** approvals, rejections with the reason, and new registrations
-- **Admin:** new events waiting for review
-
-## Other features
-
-- Password reset from the sign-in screens: enter your name, Gmail address and a new password
-- Dark and light themes, saved between visits
-- Responsive layout, visible keyboard focus and support for reduced motion
+Upload your demo video to Google Drive and paste the shareable link here (max 3 minutes). [Watch Demo](https://drive.google.com/your-video-link)
 
 ---
 
-## Getting started
+## Installation Steps
 
-Open the HTML file in a web browser. The Google Fonts (Figtree and Manrope) load from the internet, with system fonts as a fallback.
+```bash
+# 1. Clone the repository
+git clone https://github.com/your_user_name/your_repo_name.git
 
-### Sign in as each role
-
-| Role | How |
-| --- | --- |
-| **Admin** | On the first screen choose **Organizer or admin? Sign in here**, switch to **Admin**, and use the demo login `admin@collego.app` / `admin123` |
-| **Organizer** | On the same screen stay on **Organizer**, choose **New organizer? Create an account**, and enter your full name, club or organization, email and password |
-| **Student** | Choose **Continue with college email** and follow the steps above |
-
-### Try the full flow
-
-1. As an organizer, create an event and send it for approval.
-2. Sign in as admin, open the event and approve it.
-3. Sign in as a student, open **Hackathons and events**, and register.
-4. Sign back in as the organizer to see the participant's details. Sign in as admin to see only the count.
-
----
-
-## Where the data is stored
-
-Events, accounts, registrations and reviews are kept in the browser's `localStorage`, so all three accounts see the same data on one device.
-
-### Optional cloud sync
-
-The app can sync through a Firebase Realtime Database so accounts, events and registrations are the same on every device. Near the top of the script, paste your database URL between the quotes:
-
-```js
-var CLOUD_URL = '';
+# 2. Go into the project folder
+cd your_repo_name
 ```
 
-The URL looks like `https://your-project-default-rtdb.asia-southeast1.firebasedatabase.app`. Left empty, everything stays on this device only.
+3. Open `index.html` in any modern browser. No build step, server or `npm install` is needed.
+4. An internet connection is needed to load the fonts (and for cloud sync, if you enable it).
 
-Each device keeps a local copy, sends the records it changed and receives the ones other devices changed. If the cloud can't be reached, the app shows a message that changes are saved on the device and will sync later.
+**Demo admin login**
 
----
+- Email: `admin@collego.app`
+- Password: `admin123`
 
-## How the file is organized
+**Try the full flow**
 
-Everything is in one HTML file with no frameworks and no build step:
+1. Create an organizer account, create an event and send it for approval.
+2. Sign in as admin and approve the event.
+3. Create a student account, register for the event and download your ticket.
 
-- `<style>` at the top: colors for the light and dark themes and all component styles
-- The screens in the middle: login, registration, sign-in, home, notifications, organizer and admin sections, events, event details, registration form, ticket and colleges
-- One `<script>` at the bottom: navigation, forms, roles and approvals, storage, cloud sync and ticket drawing
+**(Optional) Cloud sync across devices**
 
-The ticket image is drawn on an HTML canvas.
-
----
-
-## Current status
-
-**Placeholder pages.** These home screen sections open a page that says "Being set up":
-
-- Your college
-- Attendance calculator
-- Exam timetable
-- Exam resources
-- Notes
-
-## Prototype notes
-
-- Passwords are hashed (SHA-256) before they are saved.
-- The admin demo login is written into the file.
-- Gmail verification is a prototype check: it confirms the address ends in `@gmail.com`.
-- Password reset does not send an email or a code.
-- The QR code shown for payment is a demo pattern, not a real payment code.
-- For the ID card and payment screenshot, only the file name is saved, not the image.
+1. Create a Firebase Realtime Database.
+2. In the `<script>` of `index.html`, set your database URL:
+```js
+   var CLOUD_URL = 'https://your-project-default-rtdb.asia-southeast1.firebasedatabase.app';
+```
+3. If `CLOUD_URL` is left empty, all data stays in the current browser (`localStorage`).
