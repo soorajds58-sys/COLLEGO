@@ -1,0 +1,3135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0E1424">
+<title>COLLEGO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&display=swap">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+*{margin:0}
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#F4F5F9; --surface:#FFFFFF; --surface2:#E9ECF3; --text:#141A2E; --muted:#5B6480;
+  --line:#DADEE9; --accent:#D93F1E; --on-accent:#FFFFFF; --ring:#C6CCDD; --danger:#C2261B;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1424; --surface:#161E33; --surface2:#1F2942; --text:#F1F3FA; --muted:#9BA4BF;
+    --line:#2A3556; --accent:#FF5B3A; --on-accent:#0E1424; --ring:#33406A; --danger:#FF8A7A;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1424; --surface:#161E33; --surface2:#1F2942; --text:#F1F3FA; --muted:#9BA4BF;
+  --line:#2A3556; --accent:#FF5B3A; --on-accent:#0E1424; --ring:#33406A; --danger:#FF8A7A;
+}
+html{height:100%;background:var(--bg);scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+body{
+  height:100%;position:relative;overflow:hidden;background:var(--bg);color:var(--text);
+  font-family:'Figtree',system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  font-size:16px;line-height:1.45;-webkit-tap-highlight-color:transparent;
+}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none;text-align:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+svg{display:block}
+
+/* ---------- screens ---------- */
+.screen{position:absolute;inset:0;display:none;flex-direction:column;background:var(--bg);min-height:0}
+.screen.active{display:flex;animation:enter .26s ease-out}
+.screen.active.back{animation:enterBack .26s ease-out}
+@keyframes enter{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+@keyframes enterBack{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:none}}
+
+.bar{
+  display:flex;align-items:center;gap:12px;flex:none;min-height:64px;
+  padding:10px max(16px,env(safe-area-inset-right)) 8px max(16px,env(safe-area-inset-left));
+}
+.bar .grow{flex:1;min-width:0}
+.iconbtn{
+  width:44px;height:44px;flex:none;border-radius:14px;border:1px solid var(--line);
+  background:var(--surface);display:grid;place-items:center;position:relative;
+}
+.iconbtn svg,.ico svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.badge{
+  position:absolute;top:-5px;right:-5px;min-width:20px;height:20px;padding:0 5px;border-radius:10px;
+  background:var(--accent);color:var(--on-accent);font-size:12px;font-weight:800;display:grid;place-items:center;
+}
+.badge[hidden]{display:none}
+.textbtn{font-weight:700;font-size:15px;padding:10px 6px;color:var(--text)}
+.textbtn:disabled{color:var(--muted);cursor:default}
+
+.scroll{
+  flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding:8px max(20px,env(safe-area-inset-right)) 36px max(20px,env(safe-area-inset-left));
+}
+.wrap{max-width:760px;margin:0 auto}
+h1{font-size:clamp(26px,6vw,34px);line-height:1.15;font-weight:800;letter-spacing:-.01em}
+h2{font-size:18px;font-weight:800;letter-spacing:-.005em}
+.muted{color:var(--muted)}
+
+/* ---------- buttons ---------- */
+.btn{
+  display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:54px;
+  padding:0 20px;border-radius:16px;font-weight:700;font-size:16px;text-align:center;
+}
+.btn svg{width:22px;height:22px;flex:none}
+.btn-primary{background:var(--accent);color:var(--on-accent)}
+.btn-surface{background:var(--surface);border:1px solid var(--line)}
+.btn-plain{color:var(--muted);min-height:48px}
+.btn:active{transform:scale(.985)}
+
+/* ---------- splash + login (always dark, brand look) ---------- */
+.brand{
+  --bg:#0A0D14; --surface:#141924; --text:#F5F7FB; --muted:#8C94A8; --line:#272D3D; --ring:#2B3142;
+  --accent:#FF5533; --on-accent:#FFFFFF;
+  --S:min(70vw,300px,34vh);
+  font-family:'Manrope','Figtree',system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  color:var(--text);background:var(--bg);overflow:hidden;
+}
+#s-login.active{animation:none}
+.lg{
+  flex:1;min-height:0;width:100%;max-width:min(780px,100%);margin:0 auto;display:flex;flex-direction:column;overflow-y:auto;
+  padding:clamp(20px,5vh,48px) max(28px,env(safe-area-inset-right)) 28px max(28px,env(safe-area-inset-left));
+  pointer-events:none;scrollbar-width:none;-ms-overflow-style:none;
+}
+.lg::-webkit-scrollbar{display:none;width:0;height:0}
+.brand.ready .lg{pointer-events:auto}
+.wordmark{
+  font-size:clamp(46px,13vw,80px);font-weight:800;letter-spacing:-.02em;line-height:1;
+  background:linear-gradient(90deg,#FFFFFF 62%,#FFE0D8 100%);-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;align-self:flex-start;
+}
+.slot{flex:1 1 auto;min-height:calc(var(--S) + 32px)}
+.copy{flex:none}
+.headline{font-size:clamp(25px,6.8vw,42px);font-weight:800;line-height:1.12;letter-spacing:-.015em}
+.sub{margin-top:14px;font-size:clamp(16px,4.2vw,18px);line-height:1.5;color:var(--muted);max-width:34ch}
+.actions{margin-top:28px;display:grid;gap:12px}
+.pill{border-radius:999px;min-height:60px;font-size:17px;font-weight:800}
+.pill.btn-primary{background:var(--accent);color:var(--on-accent)}
+.pill.btn-outline{background:transparent;border:1px solid var(--line);color:var(--text)}
+.free{margin-top:20px;text-align:center;font-size:14px;color:var(--muted);font-weight:500}
+
+/* first page spreads across the whole screen on bigger displays */
+@media (min-width:600px) and (max-width:899px){
+  .brand{--S:min(52vw,380px,40vh)}
+  .lg{max-width:800px;padding-left:max(44px,env(safe-area-inset-left));padding-right:max(44px,env(safe-area-inset-right))}
+  .wordmark{font-size:clamp(62px,9.4vw,84px)}
+  .headline{font-size:clamp(40px,5.8vw,54px)}
+  .sub{margin-top:18px;font-size:clamp(19px,2.4vw,22px);max-width:38ch}
+  .actions{margin-top:34px;max-width:520px}
+  .free,.staff-link,.forgot{max-width:520px;margin-left:0;margin-right:0}
+}
+@media (min-width:900px){
+  .brand{--S:min(36vw,480px,58vh)}
+  .lg{
+    max-width:min(1340px,94vw);display:grid;align-content:center;
+    grid-template-columns:minmax(0,1.05fr) minmax(300px,.95fr);
+    grid-template-rows:auto minmax(0,1fr);
+    column-gap:clamp(40px,6vw,110px);align-items:center;
+    padding:clamp(28px,5vh,56px) max(48px,env(safe-area-inset-right)) clamp(28px,5vh,56px) max(48px,env(safe-area-inset-left));
+  }
+  .wordmark{grid-column:1 / -1;grid-row:1;align-self:start;font-size:clamp(76px,6.4vw,108px)}
+  .copy{grid-column:1;grid-row:2;align-self:center}
+  .slot{grid-column:2;grid-row:2;min-height:min(58vh,560px);height:100%}
+  .headline{font-size:clamp(48px,4.5vw,70px);line-height:1.06}
+  .sub{margin-top:22px;font-size:clamp(20px,1.55vw,25px);max-width:32ch}
+  .actions{margin-top:40px;max-width:480px}
+  .pill{min-height:66px;font-size:19px}
+  .free,.staff-link,.forgot{max-width:480px;margin-left:0;margin-right:0;font-size:15px}
+  .free{margin-top:24px}
+}
+@media (min-width:1500px){
+  .headline{font-size:76px}
+  .sub{font-size:27px;max-width:31ch}
+  .wordmark{font-size:120px}
+}
+
+.rise{opacity:0;transform:translateY(56px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1)}
+.to-login .rise{opacity:1;transform:none}
+.d1{transition-delay:.3s}.d2{transition-delay:.6s}.d3{transition-delay:.8s}
+.d4{transition-delay:1s}.d5{transition-delay:1.15s}.d6{transition-delay:1.3s}
+
+.orbit{
+  position:absolute;left:50%;top:50%;width:var(--S);height:var(--S);
+  margin:calc(var(--S) / -2) 0 0 calc(var(--S) / -2);
+  transform:translate(var(--ox,0px),var(--oy,0px));transition:transform 1.8s cubic-bezier(.65,0,.35,1);
+  pointer-events:none;
+}
+.orbit i{position:absolute;display:block;border-radius:50%}
+.orbit .ring{inset:0;border:1.5px solid var(--ring)}
+.orbit .ring.inner{inset:17%;opacity:0;transition:opacity 1s .9s}
+.to-login .orbit .ring.inner{opacity:1}
+.orbit .ball{
+  left:39.5%;top:39.5%;width:21%;height:21%;
+  background:radial-gradient(circle at 35% 30%,#FF9575,#FF5533 58%,#EE3D1B);
+  box-shadow:0 0 60px 10px rgba(255,85,51,.32);
+}
+.pulses{position:absolute;inset:0;transition:opacity .6s}
+.to-login .pulses{opacity:0}
+.pulses i{inset:0;border:1.5px solid rgba(255,85,51,.55);opacity:0}
+.go .orbit .ball{animation:beat 1.5s ease-in-out 2}
+.go .pulses i{animation:expand 3s ease-out infinite}
+.pulses i:nth-child(2){animation-delay:1s}
+.pulses i:nth-child(3){animation-delay:2s}
+@keyframes beat{0%,100%{transform:scale(1)}50%{transform:scale(1.3)}}
+@keyframes expand{0%{transform:scale(.22);opacity:.7}100%{transform:scale(2.6);opacity:0}}
+
+/* ---------- registration ---------- */
+.group{margin-top:28px}
+.group h2{margin-bottom:12px}
+.field{margin-bottom:14px}
+.field label{display:block;font-weight:600;font-size:14px;margin-bottom:6px}
+.control{position:relative}
+.control input,.control select{
+  width:100%;height:52px;padding:0 16px;border-radius:14px;border:1.5px solid var(--line);
+  background:var(--surface);font-size:16px;appearance:none;-webkit-appearance:none;
+}
+.control select{padding-right:44px}
+.control.sel::after{
+  content:"";position:absolute;right:18px;top:50%;width:8px;height:8px;margin-top:-6px;
+  border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);pointer-events:none;
+}
+.control input::placeholder{color:var(--muted);opacity:.8}
+.control input[readonly]{background:var(--surface2)}
+.control .eye{position:absolute;right:4px;top:4px;width:44px;height:44px;display:grid;place-items:center;color:var(--muted)}
+.control .eye svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.field.bad input,.field.bad select{border-color:var(--danger)}
+.err{display:none;margin-top:6px;font-size:14px;color:var(--danger);font-weight:600}
+.field.bad .err{display:block}
+.hint{margin-top:6px;font-size:14px;color:var(--muted)}
+.acbox{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:30;background:var(--surface);border:1.5px solid var(--line);border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.18);max-height:240px;overflow-y:auto;padding:6px}
+.acbox[hidden]{display:none}
+.acitem{display:flex;flex-direction:column;gap:2px;width:100%;padding:10px 12px;border-radius:10px;text-align:left}
+.acitem:active,.acitem:hover{background:var(--surface2)}
+.acitem .acname{font-weight:700;font-size:15px}
+.acitem .acplace{font-size:13px;color:var(--muted)}
+.acnew{font-size:13px;color:var(--muted);padding:8px 12px}
+.footer{
+  flex:none;padding:12px max(20px,env(safe-area-inset-right)) 14px max(20px,env(safe-area-inset-left));
+  border-top:1px solid var(--line);background:var(--bg);
+}
+.footer .btn{max-width:760px;margin:0 auto}
+
+/* ---------- home ---------- */
+.hello{line-height:1.2}
+.hello small{display:block;font-size:14px;color:var(--muted)}
+.hello strong{display:block;font-size:20px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.home-wrap{max-width:960px;margin:0 auto}
+.sec{margin-top:28px}
+.sec:first-child{margin-top:8px}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:12px}
+.sec-head span{font-size:14px;color:var(--muted);font-weight:600}
+
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.tile{
+  display:flex;flex-direction:column;justify-content:space-between;gap:14px;min-height:104px;padding:16px;
+  border-radius:20px;background:var(--surface);border:1px solid var(--line);
+}
+.tile:active{transform:scale(.985)}
+.tile .ico{width:42px;height:42px;border-radius:13px;background:var(--surface2);display:grid;place-items:center;flex:none}
+.tile .tt{font-weight:700;font-size:16px;line-height:1.2}
+.tile .ts{display:block;font-weight:500;font-size:13px;margin-top:4px;opacity:.8}
+.tile.big{min-height:148px}
+.tile.accent{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.tile.accent .ico{background:color-mix(in srgb,var(--on-accent) 16%,transparent)}
+.tile.wide{grid-column:span 2;flex-direction:row;align-items:center;justify-content:flex-start;min-height:84px}
+.tile.wide .tt{flex:1}
+.tile.wide .chev{width:20px;height:20px;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+@media (min-width:640px){
+  .tiles{grid-template-columns:repeat(4,1fr)}
+  .tile.big{grid-column:span 2}
+  .tile.wide{grid-column:span 4}
+}
+
+.list{display:grid;gap:10px}
+.rem{
+  display:flex;align-items:center;gap:14px;padding:12px 14px 12px 12px;border-radius:18px;
+  background:var(--surface);border:1px solid var(--line);
+}
+.rem .check{
+  width:40px;height:40px;flex:none;border-radius:50%;border:2px solid var(--ring);display:grid;place-items:center;color:transparent;
+}
+.rem .check svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.rem.done .check{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.rem .txt{flex:1;min-width:0;text-align:left}
+.rem .txt b{display:block;font-weight:700;font-size:15px}
+.rem .txt span{font-size:13px;color:var(--muted);font-weight:500}
+.rem.done .txt b{text-decoration:line-through;color:var(--muted)}
+.rem .open{padding:8px;color:var(--muted)}
+.rem .open svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+.scroller{
+  display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px;
+  margin:0 calc(-1 * max(20px,env(safe-area-inset-right))) 0 calc(-1 * max(20px,env(safe-area-inset-left)));
+  padding-left:max(20px,env(safe-area-inset-left));padding-right:max(20px,env(safe-area-inset-right));
+  scrollbar-width:none;
+}
+.scroller::-webkit-scrollbar{display:none}
+.sug{
+  flex:0 0 min(260px,78%);scroll-snap-align:start;padding:16px;border-radius:20px;background:var(--surface2);
+  display:flex;flex-direction:column;gap:10px;min-height:150px;
+}
+.sug .ico{width:40px;height:40px;border-radius:12px;background:var(--surface);display:grid;place-items:center;color:var(--accent)}
+.sug b{font-size:16px;font-weight:700;line-height:1.25}
+.sug p{font-size:14px;color:var(--muted);flex:1}
+.sug em{font-style:normal;font-weight:700;font-size:14px}
+
+/* ---------- notifications ---------- */
+.nrow{
+  display:flex;gap:14px;align-items:flex-start;width:100%;padding:14px 16px;border-radius:18px;
+  background:var(--surface);border:1px solid var(--line);
+}
+.nrow .nd{width:10px;height:10px;border-radius:50%;background:var(--accent);margin-top:7px;flex:none}
+.nrow.read .nd{background:transparent;border:1.5px solid var(--ring)}
+.nrow b{display:block;font-weight:700;font-size:15px}
+.nrow.read b{font-weight:500;color:var(--muted)}
+.nrow span{font-size:13px;color:var(--muted)}
+
+/* ---------- section page ---------- */
+.soon{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding:56px 12px 24px}
+.soon .big-ico{width:88px;height:88px;border-radius:28px;background:var(--surface);border:1px solid var(--line);display:grid;place-items:center;color:var(--accent)}
+.soon .big-ico svg{width:40px;height:40px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.soon p{max-width:34ch;color:var(--muted)}
+.status-pill{display:inline-block;padding:8px 16px;border-radius:999px;background:var(--surface2);border:1px solid var(--line);font-weight:700;font-size:14px;line-height:1.3;min-height:0;width:auto}
+
+/* ---------- overlay / toast ---------- */
+.overlay{position:fixed;inset:0;background:rgba(6,10,20,.55);display:none;align-items:flex-end;justify-content:center;z-index:20}
+.overlay.open{display:flex}
+.sheet{
+  width:100%;max-width:520px;background:var(--bg);border-radius:26px 26px 0 0;
+  padding:24px 24px calc(24px + env(safe-area-inset-bottom,0px));animation:up .24s ease-out;
+}
+@keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.sheet h2{font-size:20px}
+.sheet p{margin:8px 0 18px;color:var(--muted);font-size:15px}
+.sheet .row{display:grid;gap:8px;margin-top:14px}
+@media (min-width:640px){.overlay{align-items:center}.sheet{border-radius:26px}}
+
+.toast{
+  position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);
+  max-width:min(92vw,420px);padding:12px 18px;border-radius:14px;background:var(--text);color:var(--bg);
+  font-weight:600;font-size:15px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:30;text-align:center;
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+
+/* ================= ROLES: organizer, admin and student events (added) ================= */
+:root{--ok:#1B7F4B;--warn:#94590A}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--ok:#5FD39A;--warn:#FFC46B}}
+:root[data-theme="dark"]{--ok:#5FD39A;--warn:#FFC46B}
+textarea{font:inherit;color:inherit}
+.btn svg,.meta svg{stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.btn:disabled{opacity:.65;cursor:default}
+.btn:disabled:active{transform:none}
+.btn-danger{background:transparent;border:1.5px solid var(--danger);color:var(--danger)}
+.btn-good{background:var(--ok);color:var(--bg)}
+.btn-ok{background:color-mix(in srgb,var(--ok) 14%,transparent);color:var(--ok);border:1px solid color-mix(in srgb,var(--ok) 45%,transparent)}
+.btn-ok:disabled{opacity:1}
+.footer .duo{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:760px;margin:0 auto}
+.control textarea{
+  display:block;width:100%;min-height:112px;padding:14px 16px;border-radius:14px;border:1.5px solid var(--line);
+  background:var(--surface);font-size:16px;line-height:1.45;resize:vertical;
+}
+.control textarea::placeholder{color:var(--muted);opacity:.8}
+.field.bad textarea{border-color:var(--danger)}
+.control input[type="date"]{min-width:0;text-align:left}
+:root[data-theme="dark"] .control input[type="date"]{color-scheme:dark}
+:root[data-theme="light"] .control input[type="date"]{color-scheme:light}
+.linkbtn{font-weight:700;font-size:15px;padding:12px 0;text-decoration:underline;text-underline-offset:3px}
+.staff-link{display:block;margin:12px auto 0;padding:10px;text-align:center;font-size:14px;font-weight:500;color:var(--muted)}
+.staff-link b{color:var(--text);font-weight:700;text-decoration:underline;text-underline-offset:3px}
+
+.seg{display:flex;gap:6px;padding:5px;border-radius:16px;background:var(--surface2);overflow-x:auto;scrollbar-width:none}
+.seg::-webkit-scrollbar{display:none}
+.seg button{
+  flex:1 0 auto;min-height:44px;padding:0 16px;border-radius:12px;font-weight:700;font-size:15px;
+  text-align:center;color:var(--muted);white-space:nowrap;
+}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--text);box-shadow:0 0 0 1.5px var(--line)}
+.seg .n{display:inline-block;min-width:22px;padding:0 6px;margin-left:4px;border-radius:11px;background:var(--surface2);font-size:12.5px;line-height:22px}
+
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.stat{padding:16px;border-radius:20px;background:var(--surface);border:1px solid var(--line)}
+.stat b{display:block;font-size:30px;line-height:1.1;font-weight:800;letter-spacing:-.01em}
+.stat span{display:block;margin-top:4px;font-size:13px;color:var(--muted);font-weight:600}
+@media (min-width:640px){.stats{grid-template-columns:repeat(4,1fr)}.stats.one{grid-template-columns:1fr}}
+.stats.one{grid-template-columns:1fr}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{
+  display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;font-size:13px;font-weight:700;line-height:1.3;
+  background:var(--surface2);color:var(--muted);
+}
+.chip.ok{color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,transparent)}
+.chip.warn{color:var(--warn);background:color-mix(in srgb,var(--warn) 14%,transparent)}
+.chip.bad{color:var(--danger);background:color-mix(in srgb,var(--danger) 12%,transparent)}
+
+.evc{
+  display:flex;flex-direction:column;gap:10px;width:100%;padding:16px;border-radius:20px;
+  background:var(--surface);border:1px solid var(--line);text-align:left;
+}
+.evc:active{transform:scale(.99)}
+.evc b{display:block;font-size:17px;font-weight:800;line-height:1.25;word-break:break-word}
+.evc .meta{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:14px;color:var(--muted);font-weight:500}
+.evc .meta span{display:inline-flex;align-items:center;gap:6px;min-width:0}
+.meta svg{width:16px;height:16px;flex:none}
+
+.facts{display:grid;gap:10px;margin-top:20px}
+.fact{display:flex;gap:14px;align-items:center;padding:14px 16px;border-radius:18px;background:var(--surface);border:1px solid var(--line)}
+.fact .ico{width:42px;height:42px;border-radius:13px;background:var(--surface2);display:grid;place-items:center;flex:none;color:var(--accent)}
+.fact div{min-width:0}
+.fact small{display:block;font-size:13px;color:var(--muted);font-weight:600}
+.fact strong{display:block;font-size:16px;font-weight:700;word-break:break-word}
+
+.callout{margin-top:20px;padding:16px;border-radius:18px;border:1.5px solid var(--line);background:var(--surface)}
+.callout.bad{border-color:var(--danger)}
+.callout.ok{border-color:var(--ok)}
+.callout h3{font-size:15px;font-weight:800}
+.callout p{margin-top:6px;white-space:pre-wrap;word-break:break-word}
+
+.reg{display:flex;gap:12px;padding:14px;border-radius:18px;background:var(--surface);border:1px solid var(--line)}
+.reg .av{width:40px;height:40px;border-radius:50%;background:var(--surface2);display:grid;place-items:center;font-weight:800;flex:none}
+.reg div{min-width:0}
+.reg div b{display:block;font-weight:700}
+.reg div span{display:block;font-size:14px;color:var(--muted);word-break:break-word}
+.soon.compact{padding-top:28px}
+
+/* ============ ADDED: forgot password, event form, payment, ticket, home alert ============ */
+.forgot{display:block;width:100%;margin:6px auto 0;padding:12px;text-align:center;font-size:14px;font-weight:700;color:var(--muted)}
+.forgot b{color:var(--text);font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.req{color:var(--danger);font-weight:800}
+.filebox{display:flex;align-items:center;gap:10px;padding:13px 14px;border-radius:14px;border:1.5px dashed var(--line);background:var(--surface)}
+.filebox input{flex:1;min-width:0;font-size:14px}
+.field.bad .filebox{border-color:var(--danger)}
+label.checkrow{display:flex;gap:12px;align-items:flex-start;margin-bottom:0;padding:14px 16px;border-radius:16px;background:var(--surface);border:1.5px solid var(--line);font-size:15px}
+label.checkrow input{width:22px;height:22px;flex:none;margin-top:1px;accent-color:var(--accent)}
+label.checkrow span{font-size:14.5px;font-weight:600;line-height:1.4}
+.field.bad label.checkrow{border-color:var(--danger)}
+.paybox{margin-top:14px;padding:20px 18px;border-radius:20px;background:var(--surface);border:1px solid var(--line);text-align:center}
+.paybox canvas{width:min(190px,60vw);height:auto;margin:0 auto;border-radius:12px;background:#FFFFFF;padding:10px}
+.paybox b{display:block;margin-top:14px;font-size:18px;font-weight:800}
+.paybox small{display:block;margin-top:6px;font-size:13px;color:var(--muted);line-height:1.5}
+.tkwrap{margin-top:18px;padding:10px;border-radius:22px;background:var(--surface2)}
+.tkwrap canvas{display:block;width:100%;height:auto;border-radius:14px}
+.alert{
+  display:flex;gap:14px;align-items:flex-start;width:100%;text-align:left;padding:15px 16px;border-radius:20px;
+  background:color-mix(in srgb,var(--accent) 12%,transparent);border:1.5px solid color-mix(in srgb,var(--accent) 45%,transparent);
+}
+.alert .ico{width:40px;height:40px;flex:none;border-radius:13px;background:var(--surface);display:grid;place-items:center;color:var(--accent)}
+.alert .ico svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.alert div{min-width:0;flex:1}
+.alert b{display:block;font-size:15px;font-weight:800;line-height:1.3}
+.alert span{display:block;margin-top:3px;font-size:13.5px;color:var(--muted);font-weight:600}
+.alert .live-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:7px;vertical-align:middle}
+
+/* ============ ADDED: colleges, search and reviews ============ */
+.searchwrap{position:relative;margin-bottom:16px}
+.searchwrap input{
+  width:100%;height:54px;padding:0 16px 0 50px;border-radius:16px;border:1.5px solid var(--line);
+  background:var(--surface);font-size:16px;appearance:none;-webkit-appearance:none;
+}
+.searchwrap input::placeholder{color:var(--muted);opacity:.85}
+.searchwrap .si{position:absolute;left:16px;top:50%;margin-top:-11px;color:var(--muted);pointer-events:none}
+.searchwrap .si svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.clg{
+  display:flex;flex-direction:column;gap:9px;width:100%;padding:16px;border-radius:20px;
+  background:var(--surface);border:1px solid var(--line);text-align:left;
+}
+.clg:active{transform:scale(.99)}
+.clg b{display:block;font-size:17px;font-weight:800;line-height:1.25;word-break:break-word}
+.clg .meta{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:14px;color:var(--muted);font-weight:500}
+.clg .meta span{display:inline-flex;align-items:center;gap:6px;min-width:0}
+.stars{display:inline-flex;gap:2px;align-items:center;color:var(--accent)}
+.stars svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linejoin:round}
+.stars svg.on{fill:currentColor}
+.rate{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--muted)}
+.rvw{padding:14px 16px;border-radius:18px;background:var(--surface);border:1px solid var(--line)}
+.rvw .top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.rvw .top b{font-size:15px;font-weight:800}
+.rvw .top small{font-size:13px;color:var(--muted);font-weight:600;margin-left:auto}
+.rvw p{margin-top:8px;font-size:15px;line-height:1.45;white-space:pre-wrap;word-break:break-word}
+.starpick{display:flex;gap:8px}
+.starpick button{
+  width:48px;height:48px;border-radius:14px;border:1.5px solid var(--line);background:var(--surface);
+  display:grid;place-items:center;color:var(--muted);
+}
+.starpick button svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linejoin:round}
+.starpick button[aria-pressed="true"]{color:var(--accent);border-color:var(--accent)}
+.starpick button[aria-pressed="true"] svg{fill:currentColor}
+.field.bad .starpick button{border-color:var(--danger)}
+
+/* ---- DD/MM/YYYY date fields and the calendar picker ---- */
+.datebtn{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;height:52px;padding:0 16px;
+  border-radius:14px;border:1.5px solid var(--line);background:var(--surface);font-size:16px;text-align:left;
+}
+.datebtn .ph{color:var(--muted);opacity:.8}
+.datebtn svg{width:22px;height:22px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;color:var(--muted)}
+.field.bad .datebtn{border-color:var(--danger)}
+.dp{max-width:400px;padding-top:20px}
+.dp-head{display:flex;align-items:center;gap:8px}
+.dp-head .sel2{flex:1;min-width:0;display:flex;gap:8px}
+.dp-head select{flex:1;min-width:0;height:44px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);padding:0 6px;font-weight:700;font-size:14px}
+.dp-head select#dpMonth{flex:1.7}
+.dp-week,.dp-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.dp-week{margin:14px 0 6px}
+.dp-week span{text-align:center;font-size:12px;font-weight:700;color:var(--muted)}
+.dp-grid button{height:42px;border-radius:12px;font-weight:600;font-size:15px;text-align:center}
+.dp-grid button:disabled{color:var(--muted);opacity:.4;cursor:default}
+.dp-grid button.today{box-shadow:inset 0 0 0 1.5px var(--accent)}
+.dp-grid button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
+.dp-foot{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px}
+.dp-foot .btn{min-height:46px;font-size:15px;padding:0 8px}
+</style>
+</head>
+<body>
+
+<!-- ============ 1. SPLASH + LOGIN ============ -->
+<section class="screen brand" id="s-login" aria-label="Sign in">
+  <div class="lg">
+    <h1 class="wordmark rise d1">COLLEGO</h1>
+    <div class="slot" id="orbitSlot"></div>
+    <div class="copy">
+      <h2 class="headline rise d2">Your entire<br>college life. One app.</h2>
+      <p class="sub rise d3">Attendance, notes, timetables and events from your college and beyond.</p>
+      <div class="actions">
+        <button class="btn pill btn-primary rise d4" id="btnGoogle">Continue with college email</button>
+      </div>
+      <button class="forgot rise d5" data-forgot="1">Forgot password? <b>Reset it here</b></button>
+      <p class="free rise d6">Free for students</p>
+      <button class="staff-link rise d6" id="btnStaff">Organizer or admin? <b>Sign in here</b></button>
+    </div>
+  </div>
+  <div class="orbit" id="orbit" aria-hidden="true">
+    <div class="pulses"><i></i><i></i><i></i></div>
+    <i class="ring outer"></i>
+    <i class="ring inner"></i>
+    <i class="ball"></i>
+  </div>
+</section>
+
+<!-- ============ 2. REGISTRATION ============ -->
+<section class="screen" id="s-register" aria-label="Create your account">
+  <div class="bar">
+    <button class="iconbtn js-back" aria-label="Go back"></button>
+  </div>
+  <div class="scroll">
+    <div class="wrap">
+      <h1>Create your account</h1>
+      <p class="muted" style="margin-top:8px">Fill in every field to continue.</p>
+      <div id="regFields"></div>
+      <button type="button" class="forgot" data-forgot="1">Forgot password? <b>Reset it here</b></button>
+    </div>
+  </div>
+  <div class="footer">
+    <button class="btn btn-primary" id="btnRegister">Create account</button>
+  </div>
+</section>
+
+<!-- ============ 2b. STUDENT SIGN IN (returning students) ============ -->
+<section class="screen" id="s-signin" aria-label="Student sign in">
+  <div class="bar">
+    <button class="iconbtn js-back" aria-label="Go back"></button>
+  </div>
+  <div class="scroll">
+    <div class="wrap">
+      <h1>Welcome back</h1>
+      <p class="muted" style="margin-top:8px">Enter your password to open your account.</p>
+      <div style="margin-top:24px">
+        <div class="field" id="inw-email">
+          <label for="inf-email">Email</label>
+          <div class="control"><input id="inf-email" type="email" readonly autocomplete="username"></div>
+          <div class="hint">Verified with Google</div>
+        </div>
+        <div class="field" id="inw-password">
+          <label for="inf-password">Password</label>
+          <div class="control">
+            <input id="inf-password" type="password" autocomplete="current-password" placeholder="Your password">
+            <button class="eye" type="button" id="inEye" aria-label="Show password"></button>
+          </div>
+          <div class="err" id="ine-password"></div>
+        </div>
+        <button type="button" class="forgot" data-forgot="1" style="margin-top:8px">Forgot password? <b>Reset it here</b></button>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <button class="btn btn-primary" id="inSubmit">Sign in</button>
+  </div>
+</section>
+
+<!-- ============ 3. HOME ============ -->
+<section class="screen" id="s-home" aria-label="Home">
+  <div class="bar">
+    <button class="iconbtn js-back" aria-label="Go back"></button>
+    <div class="grow hello"><small>Welcome back</small><strong id="helloName">there</strong></div>
+    <button class="iconbtn js-theme" id="btnTheme" aria-label="Switch theme"></button>
+    <button class="iconbtn" id="btnBell" aria-label="Notifications"><span id="bellIco"></span><span class="badge" id="bellBadge" hidden>0</span></button>
+  </div>
+  <div class="scroll">
+    <div class="home-wrap">
+      <div class="sec" id="homeAlertSec" hidden>
+        <div class="sec-head"><h2>Live now</h2><span id="homeAlertCount"></span></div>
+        <div class="list" id="homeAlert"></div>
+      </div>
+      <div class="sec">
+        <div class="sec-head"><h2>Sections</h2></div>
+        <div class="tiles" id="tiles"></div>
+      </div>
+      <div class="sec">
+        <div class="sec-head"><h2>Reminders</h2><span id="remCount"></span></div>
+        <div class="list" id="reminders"></div>
+      </div>
+      <div class="sec">
+        <div class="sec-head"><h2>Suggested for you</h2></div>
+        <div class="scroller" id="suggest"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4. NOTIFICATIONS ============ -->
+<section class="screen" id="s-notifications" aria-label="Notifications">
+  <div class="bar">
+    <button class="iconbtn js-back" aria-label="Go back"></button>
+    <h2 class="grow">Notifications</h2>
+    <button class="textbtn" id="btnReadAll">Mark all read</button>
+  </div>
+  <div class="scroll">
+    <div class="wrap"><div class="list" id="notifs"></div></div>
+  </div>
+</section>
+
+<!-- ============ 5. SECTION PAGE ============ -->
+<section class="screen" id="s-section" aria-label="Section">
+  <div class="bar">
+    <button class="iconbtn js-back" aria-label="Go back"></button>
+    <h2 class="grow" id="secTitle"></h2>
+  </div>
+  <div class="scroll">
+    <div class="wrap">
+      <div class="soon">
+        <div class="big-ico" id="secIcon"></div>
+        <h1 id="secH"></h1>
+        <p id="secDesc"></p>
+        <span class="status-pill">Being set up</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6. ORGANIZER / ADMIN SIGN IN ============ -->
+<section class="screen" id="s-staff" aria-label="Organizer and admin sign in">
+  <div class="bar">
+    <button class="iconbtn js-back" aria-label="Go back"></button>
+  </div>
+  <div class="scroll">
+    <div class="wrap">
+      <h1 id="stTitle">Organizer sign in</h1>
+      <p class="muted" id="stSub" style="margin-top:8px"></p>
+      <div class="seg" role="group" aria-label="Account type" style="margin-top:22px">
+        <button type="button" id="stOrg" aria-pressed="true">Organizer</button>
+        <button type="button" id="stAdm" aria-pressed="false">Admin</button>
+      </div>
+      <div style="margin-top:24px">
+        <div class="field" id="sw-name" hidden>
+          <label for="sf-name">Full name</label>
+          <div class="control"><input id="sf-name" type="text" autocomplete="name" placeholder="Your full name"></div>
+          <div class="err" id="se-name"></div>
+        </div>
+        <div class="field" id="sw-club" hidden>
+          <label for="sf-club">Club or organization</label>
+          <div class="control"><input id="sf-club" type="text" autocomplete="organization" placeholder="e.g. Coding Club"></div>
+          <div class="err" id="se-club"></div>
+        </div>
+        <div class="field" id="sw-email">
+          <label for="sf-email">Email</label>
+          <div class="control"><input id="sf-email" type="email" autocomplete="username" inputmode="email" placeholder="you@example.com"></div>
+          <div class="err" id="se-email"></div>
+        </div>
+        <div class="field" id="sw-password">
+          <label for="sf-password">Password</label>
+          <div class="control">
+            <input id="sf-password" type="password" autocomplete="current-password" placeholder="Your password">
+            <button class="eye" type="button" id="sfEye" aria-label="Show password"></button>
+          </div>
+          <div class="err" id="se-password"></div>
+          <div class="hint" id="stAdminHint" hidden>Demo admin login: admin@collego.app / admin123</div>
+        </div>
+        <button type="button" class="linkbtn" id="stMode"></button>
+        <button type="button" class="forgot" data-forgot="1" style="margin-top:8px">Forgot password? <b>Reset it here</b></button>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <button class="btn btn-primary" id="stSubmit">Sign in</button>
+  </div>
+</section>
+
+<!-- ============ 7. ORGANIZER HOME ============ -->
+<section class="screen" id="s-org" aria-label="Organizer home">
+  <div class="bar">
+    <button class="iconbtn" id="btnOrgOut" aria-label="Sign out"></button>
+    <div class="grow hello"><small>Organizer account</small><strong id="orgHello">there</strong></div>
+    <button class="iconbtn js-theme" aria-label="Switch theme"></button>
+    <button class="iconbtn" id="btnBellO" aria-label="Notifications"></button>
+  </div>
+  <div class="scroll">
+    <div class="home-wrap">
+      <div class="sec"><div class="stats" id="orgStats"></div></div>
+      <div class="sec"><button class="btn btn-primary" id="btnNewEvent"></button></div>
+      <div class="sec"><button class="btn btn-surface" id="orgColOpen">Search colleges</button></div>
+      <div class="sec">
+        <div class="sec-head"><h2>My events</h2><span id="orgCount"></span></div>
+        <div class="list" id="orgList"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 8. ADMIN HOME ============ -->
+<section class="screen" id="s-adm" aria-label="Admin home">
+  <div class="bar">
+    <button class="iconbtn" id="btnAdmOut" aria-label="Sign out"></button>
+    <div class="grow hello"><small>Signed in as</small><strong>Admin</strong></div>
+    <button class="iconbtn js-theme" aria-label="Switch theme"></button>
+    <button class="iconbtn" id="btnBellA" aria-label="Notifications"></button>
+  </div>
+  <div class="scroll">
+    <div class="home-wrap">
+      <div class="sec"><div class="stats" id="admStats"></div></div>
+      <div class="sec">
+        <div class="sec-head"><h2>Colleges</h2><span id="admColCount"></span></div>
+        <div class="list">
+          <button class="btn btn-primary" id="admColAdd">Add a college</button>
+          <button class="btn btn-surface" id="admColOpen">Search and manage colleges</button>
+        </div>
+      </div>
+      <div class="sec">
+        <div class="sec-head"><h2>Events from organizers</h2></div>
+        <div class="seg" id="admTabs" role="group" aria-label="Filter events"></div>
+        <div class="list" id="admList" style="margin-top:14px"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 9. CREATE / EDIT EVENT (organizer) ============ -->
+<section class="screen" id="s-create" aria-label="Create event">
+  <div class="bar">
+    <button class="iconbtn js-back" aria-label="Go back"></button>
+    <h2 class="grow" id="crTitle">Create event</h2>
+  </div>
+  <div class="scroll">
+    <div class="wrap">
+      <p class="muted" id="crIntro"></p>
+      <div class="callout bad" id="crFeedback" hidden>
+        <h3>Feedback from the admin</h3>
+        <p id="crReason"></p>
+      </div>
+      <div style="margin-top:20px">
+        <div class="field" id="ew-title">
+          <label for="ef-title">Event name</label>
+          <div class="control"><input id="ef-title" type="text" maxlength="80" placeholder="e.g. Inter-college Hackathon"></div>
+          <div class="err" id="ee-title"></div>
+        </div>
+        <div class="field" id="ew-desc">
+          <label for="ef-desc">About the event (optional)</label>
+          <div class="control"><textarea id="ef-desc" maxlength="600" placeholder="What is the event about? Who can join?"></textarea></div>
+          <div class="err" id="ee-desc"></div>
+        </div>
+        <div class="field" id="ew-date">
+          <label for="ef-date">Event date</label>
+          <div class="control"><input id="ef-date" type="hidden" data-datefield="1"></div>
+          <div class="err" id="ee-date"></div>
+        </div>
+        <div class="field" id="ew-time">
+          <label for="ef-time">Event time (optional)</label>
+          <div class="control"><input id="ef-time" type="time"></div>
+          <div class="err" id="ee-time"></div>
+        </div>
+        <div class="field" id="ew-deadline">
+          <label for="ef-deadline">Registration deadline</label>
+          <div class="control"><input id="ef-deadline" type="hidden" data-datefield="1"></div>
+          <div class="err" id="ee-deadline"></div>
+        </div>
+        <div class="field" id="ew-venue">
+          <label for="ef-venue">Venue</label>
+          <div class="control"><input id="ef-venue" type="text" maxlength="100" placeholder="e.g. Main Auditorium"></div>
+          <div class="err" id="ee-venue"></div>
+        </div>
+        <div class="field" id="ew-clg">
+          <label for="ef-clg">College conducting this event (optional)</label>
+          <div class="control">
+            <input id="ef-clg" type="text" autocomplete="off" placeholder="Search for the college name">
+            <div class="acbox" id="ef-clg-box" hidden></div>
+          </div>
+          <div class="hint">Start typing to see matching colleges — you can pick one even if the admin hasn't added it yet.</div>
+          <div class="err" id="ee-clg"></div>
+        </div>
+        <div class="field" id="ew-feetype">
+          <label for="ef-feetype">Registration fee</label>
+          <div class="control sel">
+            <select id="ef-feetype"><option value="free">Free</option><option value="paid">Paid</option></select>
+          </div>
+          <div class="err" id="ee-feetype"></div>
+        </div>
+        <div class="field" id="ew-fee" hidden>
+          <label for="ef-fee">Fee amount (₹)</label>
+          <div class="control"><input id="ef-fee" type="number" min="1" step="1" inputmode="numeric" placeholder="e.g. 200"></div>
+          <div class="err" id="ee-fee"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <button class="btn btn-primary" id="crSubmit">Send to admin for approval</button>
+  </div>
+</section>
+
+<!-- ============ 10. EVENTS LIST (student) ============ -->
+<section class="screen" id="s-events" aria-label="Hackathons and events">
+  <div class="bar">
+    <button class="iconbtn js-back" aria-label="Go back"></button>
+    <h2 class="grow">Hackathons and events</h2>
+  </div>
+  <div class="scroll">
+    <div class="wrap">
+      <p class="muted" style="margin-bottom:16px">Events approved by the admin. Register before the deadline.</p>
+      <div class="list" id="evList"></div>
+      <div class="sec" id="tkSec" hidden>
+        <div class="sec-head"><h2>My tickets</h2><span id="tkCount"></span></div>
+        <div class="list" id="tkList"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 11. EVENT DETAILS (student, organizer, admin) ============ -->
+<section class="screen" id="s-event" aria-label="Event details">
+  <div class="bar">
+    <button class="iconbtn js-back" aria-label="Go back"></button>
+    <h2 class="grow">Event details</h2>
+  </div>
+  <div class="scroll">
+    <div class="wrap" id="evBody"></div>
+  </div>
+  <div class="footer" id="evFooter" hidden></div>
+</section>
+
+<!-- ============ 12. EVENT REGISTRATION FORM (student) ============ -->
+<section class="screen" id="s-form" aria-label="Event registration form">
+  <div class="bar">
+    <button class="iconbtn js-back" aria-label="Go back"></button>
+    <h2 class="grow">Registration form</h2>
+  </div>
+  <div class="scroll">
+    <div class="wrap">
+      <h1 id="gfHead" style="word-break:break-word"></h1>
+      <p class="muted" id="gfSub" style="margin-top:8px"></p>
+
+      <div class="group">
+        <h2>Your details</h2>
+        <div class="field" id="gw-name">
+          <label for="gf-name">Full name <span class="req">*</span></label>
+          <div class="control"><input id="gf-name" type="text" autocomplete="name" placeholder="Your full name"></div>
+          <div class="err" id="ge-name"></div>
+        </div>
+        <div class="field" id="gw-email">
+          <label for="gf-email">Email address <span class="req">*</span></label>
+          <div class="control"><input id="gf-email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com"></div>
+          <div class="err" id="ge-email"></div>
+        </div>
+        <div class="field" id="gw-phone">
+          <label for="gf-phone">Phone / WhatsApp number <span class="req">*</span></label>
+          <div class="control"><input id="gf-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="10-digit mobile number"></div>
+          <div class="err" id="ge-phone"></div>
+        </div>
+      </div>
+
+      <div class="group">
+        <h2>College details</h2>
+        <div class="field" id="gw-college">
+          <label for="gf-college">College name <span class="req">*</span></label>
+          <div class="control"><input id="gf-college" type="text" autocomplete="organization" placeholder="Name of your college"></div>
+          <div class="err" id="ge-college"></div>
+        </div>
+        <div class="field" id="gw-dept">
+          <label for="gf-dept">Department and year of study <span class="req">*</span></label>
+          <div class="control"><input id="gf-dept" type="text" placeholder="e.g. Computer Science, 3rd year"></div>
+          <div class="err" id="ge-dept"></div>
+        </div>
+        <div class="field" id="gw-roll">
+          <label for="gf-roll">College ID or roll number <span class="req">*</span></label>
+          <div class="control"><input id="gf-roll" type="text" placeholder="Your roll or ID number"></div>
+          <div class="err" id="ge-roll"></div>
+        </div>
+        <div class="field" id="gw-idcard">
+          <label for="gf-idcard">ID card upload (optional)</label>
+          <div class="filebox"><input id="gf-idcard" type="file" accept="image/*,.pdf"></div>
+          <div class="err" id="ge-idcard"></div>
+          <div class="hint">A photo of your college ID card. Optional for this event.</div>
+        </div>
+      </div>
+
+      <div class="group">
+        <h2>Team</h2>
+        <div class="field" id="gw-teamtype">
+          <label for="gf-teamtype">Are you taking part alone or as a team? <span class="req">*</span></label>
+          <div class="control sel">
+            <select id="gf-teamtype">
+              <option value="Individual">Individual</option>
+              <option value="Team">Team</option>
+            </select>
+          </div>
+          <div class="err" id="ge-teamtype"></div>
+        </div>
+        <div class="field" id="gw-teamname" hidden>
+          <label for="gf-teamname">Team name <span class="req">*</span></label>
+          <div class="control"><input id="gf-teamname" type="text" placeholder="e.g. Byte Squad"></div>
+          <div class="err" id="ge-teamname"></div>
+        </div>
+        <div class="field" id="gw-members" hidden>
+          <label for="gf-members">Team members' details <span class="req">*</span></label>
+          <div class="control"><textarea id="gf-members" maxlength="600" placeholder="One member per line: name, department, phone number"></textarea></div>
+          <div class="err" id="ge-members"></div>
+        </div>
+      </div>
+
+      <div class="group">
+        <h2>Food preference</h2>
+        <div class="field" id="gw-food">
+          <label for="gf-food">Veg or Non-Veg <span class="req">*</span></label>
+          <div class="control sel">
+            <select id="gf-food">
+              <option value="">Select your food preference</option>
+              <option value="Veg">Veg</option>
+              <option value="Non-Veg">Non-Veg</option>
+            </select>
+          </div>
+          <div class="err" id="ge-food"></div>
+        </div>
+      </div>
+
+      <div class="group" id="gfPaySec" hidden>
+        <h2>Payment</h2>
+        <div class="paybox">
+          <canvas id="gfQR" width="240" height="240" aria-label="Dummy payment QR code"></canvas>
+          <b id="gfAmount"></b>
+          <small id="gfPayNote"></small>
+        </div>
+        <div class="field" id="gw-txn" style="margin-top:16px">
+          <label for="gf-txn">Transaction ID <span class="req">*</span></label>
+          <div class="control"><input id="gf-txn" type="text" placeholder="e.g. 4172839104"></div>
+          <div class="err" id="ge-txn"></div>
+        </div>
+        <div class="field" id="gw-shot">
+          <label for="gf-shot">Payment screenshot <span class="req">*</span></label>
+          <div class="filebox"><input id="gf-shot" type="file" accept="image/*"></div>
+          <div class="err" id="ge-shot"></div>
+        </div>
+      </div>
+
+      <div class="group">
+        <h2>Consent</h2>
+        <div class="field" id="gw-consent">
+          <label class="checkrow">
+            <input id="gf-consent" type="checkbox">
+            <span>I agree to follow the rules and the code of conduct of this event. <span class="req">*</span></span>
+          </label>
+          <div class="err" id="ge-consent"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <button class="btn btn-primary" id="gfSubmit">Submit registration</button>
+  </div>
+</section>
+
+<!-- ============ 13. EVENT TICKET (student) ============ -->
+<section class="screen" id="s-ticket" aria-label="Event ticket">
+  <div class="bar">
+    <button class="iconbtn js-back" aria-label="Go back"></button>
+    <h2 class="grow">Your ticket</h2>
+  </div>
+  <div class="scroll">
+    <div class="wrap">
+      <h1 id="tkHead">You are registered</h1>
+      <p class="muted" id="tkSub" style="margin-top:8px"></p>
+      <div class="tkwrap"><canvas id="tkCanvas" width="1000" height="560" aria-label="Event ticket"></canvas></div>
+      <p class="hint" style="margin-top:12px">Show this ticket at the venue. You can download it as an image and find it again under My tickets.</p>
+    </div>
+  </div>
+  <div class="footer">
+    <button class="btn btn-primary" id="tkDownload">Download ticket</button>
+  </div>
+</section>
+
+<!-- ============ 14. COLLEGES: SEARCH AND LIST (all roles) ============ -->
+<section class="screen" id="s-colleges" aria-label="Explore colleges">
+  <div class="bar">
+    <button class="iconbtn js-back" aria-label="Go back"></button>
+    <h2 class="grow">Explore colleges</h2>
+  </div>
+  <div class="scroll">
+    <div class="wrap">
+      <p class="muted" id="colIntro" style="margin-bottom:14px"></p>
+      <div class="searchwrap">
+        <span class="si" id="colSearchIco"></span>
+        <input id="colSearch" type="search" autocomplete="off" placeholder="Search colleges by name, place or university">
+      </div>
+      <div style="margin-bottom:16px" id="colAddWrap" hidden>
+        <button class="btn btn-primary" id="colAdd">Add a college</button>
+      </div>
+      <div class="sec-head"><h2>Colleges</h2><span id="colCount"></span></div>
+      <div class="list" id="colList" style="margin-top:12px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 15. COLLEGE DETAILS (all roles) ============ -->
+<section class="screen" id="s-college" aria-label="College details">
+  <div class="bar">
+    <button class="iconbtn js-back" aria-label="Go back"></button>
+    <h2 class="grow">College details</h2>
+  </div>
+  <div class="scroll">
+    <div class="wrap" id="clgBody"></div>
+  </div>
+  <div class="footer" id="clgFooter" hidden></div>
+</section>
+
+<!-- ============ 16. ADD / EDIT COLLEGE (admin only) ============ -->
+<section class="screen" id="s-addcollege" aria-label="Add a college">
+  <div class="bar">
+    <button class="iconbtn js-back" aria-label="Go back"></button>
+    <h2 class="grow" id="acTitle">Add a college</h2>
+  </div>
+  <div class="scroll">
+    <div class="wrap">
+      <p class="muted" id="acIntro">Only the admin can add colleges. Students and organizers can search these details and review them.</p>
+      <div style="margin-top:20px">
+        <div class="field" id="cw-name">
+          <label for="cf-name">College name</label>
+          <div class="control"><input id="cf-name" type="text" maxlength="120" placeholder="e.g. College of Engineering Trivandrum"></div>
+          <div class="err" id="ce-name"></div>
+        </div>
+        <div class="field" id="cw-place">
+          <label for="cf-place">Place and district</label>
+          <div class="control"><input id="cf-place" type="text" maxlength="100" placeholder="e.g. Thiruvananthapuram, Kerala"></div>
+          <div class="err" id="ce-place"></div>
+        </div>
+        <div class="field" id="cw-univ">
+          <label for="cf-univ">University</label>
+          <div class="control"><input id="cf-univ" type="text" maxlength="120" placeholder="e.g. APJ Abdul Kalam Technological University (KTU)"></div>
+          <div class="err" id="ce-univ"></div>
+        </div>
+        <div class="field" id="cw-type">
+          <label for="cf-type">Type of college</label>
+          <div class="control sel">
+            <select id="cf-type">
+              <option value="Government">Government</option>
+              <option value="Government aided">Government aided</option>
+              <option value="Self financing">Self financing</option>
+              <option value="Autonomous">Autonomous</option>
+              <option value="Deemed university">Deemed university</option>
+            </select>
+          </div>
+          <div class="err" id="ce-type"></div>
+        </div>
+        <div class="field" id="cw-courses">
+          <label for="cf-courses">Courses offered</label>
+          <div class="control"><input id="cf-courses" type="text" maxlength="160" placeholder="e.g. B.Tech, M.Tech, MCA"></div>
+          <div class="err" id="ce-courses"></div>
+        </div>
+        <div class="field" id="cw-website">
+          <label for="cf-website">Website (optional)</label>
+          <div class="control"><input id="cf-website" type="text" maxlength="120" placeholder="e.g. www.example.ac.in"></div>
+          <div class="err" id="ce-website"></div>
+        </div>
+        <div class="field" id="cw-about">
+          <label for="cf-about">About the college</label>
+          <div class="control"><textarea id="cf-about" maxlength="600" placeholder="Campus, departments, clubs and the events it usually conducts."></textarea></div>
+          <div class="err" id="ce-about"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <button class="btn btn-primary" id="acSubmit">Save college</button>
+  </div>
+</section>
+
+<!-- Review sheet (students) -->
+<div class="overlay" id="rvSheet" role="dialog" aria-modal="true" aria-labelledby="rvTitle">
+  <div class="sheet">
+    <h2 id="rvTitle">Write a review</h2>
+    <p id="rvText"></p>
+    <div class="field" id="rvw-rating">
+      <label for="rvStars">Your rating</label>
+      <div class="starpick" id="rvStars" role="group" aria-label="Your rating"></div>
+      <div class="err" id="rve-rating"></div>
+    </div>
+    <div class="field" id="rvw-text" style="margin:0">
+      <label for="rvf-text">Your comment</label>
+      <div class="control"><textarea id="rvf-text" maxlength="600" placeholder="What was your experience? Be fair and respectful."></textarea></div>
+      <div class="err" id="rve-text"></div>
+    </div>
+    <div class="row">
+      <button class="btn btn-primary" id="rvConfirm">Post review</button>
+      <button class="btn btn-plain" id="rvCancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Forgot password sheet -->
+<div class="overlay" id="fpSheet" role="dialog" aria-modal="true" aria-labelledby="fpTitle">
+  <div class="sheet">
+    <h2 id="fpTitle">Reset your password</h2>
+    <p>Enter your name and your Gmail address, then choose a new password.</p>
+    <div class="field" id="fpw-name">
+      <label for="fpf-name">Full name</label>
+      <div class="control"><input id="fpf-name" type="text" autocomplete="name" placeholder="Your full name"></div>
+      <div class="err" id="fpe-name"></div>
+    </div>
+    <div class="field" id="fpw-email">
+      <label for="fpf-email">Gmail address</label>
+      <div class="control"><input id="fpf-email" type="email" inputmode="email" autocomplete="email" placeholder="yourname@gmail.com"></div>
+      <div class="err" id="fpe-email"></div>
+    </div>
+    <div class="field" id="fpw-password">
+      <label for="fpf-password">New password</label>
+      <div class="control">
+        <input id="fpf-password" type="password" autocomplete="new-password" placeholder="At least 6 characters">
+        <button class="eye" type="button" id="fpEye" aria-label="Show password"></button>
+      </div>
+      <div class="err" id="fpe-password"></div>
+    </div>
+    <div class="field" id="fpw-confirm" style="margin:0">
+      <label for="fpf-confirm">Confirm new password</label>
+      <div class="control"><input id="fpf-confirm" type="password" autocomplete="new-password" placeholder="Type the password again"></div>
+      <div class="err" id="fpe-confirm"></div>
+    </div>
+    <div class="row">
+      <button class="btn btn-primary" id="fpConfirm">Reset password</button>
+      <button class="btn btn-plain" id="fpCancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Google sheet -->
+<div class="overlay" id="gSheet" role="dialog" aria-modal="true" aria-labelledby="gTitle">
+  <div class="sheet">
+    <h2 id="gTitle">Continue with Google</h2>
+    <p>Enter your Gmail address to verify it. This is a prototype check; full Google sign-in is connected once the app is hosted with Google credentials.</p>
+    <div class="field" id="gField" style="margin:0">
+      <label for="gEmail">Gmail address</label>
+      <div class="control"><input id="gEmail" type="email" inputmode="email" autocomplete="email" placeholder="yourname@gmail.com"></div>
+      <div class="err" id="gErr">Enter a valid Gmail address ending in @gmail.com</div>
+    </div>
+    <div class="row">
+      <button class="btn btn-primary" id="gVerify">Verify Gmail</button>
+      <button class="btn btn-plain" id="gCancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Reject sheet (admin) -->
+<div class="overlay" id="rejSheet" role="dialog" aria-modal="true" aria-labelledby="rejTitle">
+  <div class="sheet">
+    <h2 id="rejTitle">Reject this event</h2>
+    <p>Write the reason. It is sent to the organizer as feedback.</p>
+    <div class="field" id="rejField" style="margin:0">
+      <label for="rejReason">Reason for rejection</label>
+      <div class="control"><textarea id="rejReason" maxlength="500" placeholder="e.g. The venue is already booked on this date."></textarea></div>
+      <div class="err" id="rejErr">Type a reason so the organizer knows what to fix</div>
+    </div>
+    <div class="row">
+      <button class="btn btn-danger" id="rejConfirm">Reject and send feedback</button>
+      <button class="btn btn-plain" id="rejCancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Calendar picker (dates are shown as DD/MM/YYYY) -->
+<div class="overlay" id="dpSheet" role="dialog" aria-modal="true" aria-labelledby="dpTitle">
+  <div class="sheet dp">
+    <h2 id="dpTitle">Choose a date</h2>
+    <div class="dp-head" style="margin-top:12px">
+      <button type="button" class="iconbtn" id="dpPrev" aria-label="Previous month"></button>
+      <div class="sel2"><select id="dpMonth" aria-label="Month"></select><select id="dpYear" aria-label="Year"></select></div>
+      <button type="button" class="iconbtn" id="dpNext" aria-label="Next month"></button>
+    </div>
+    <div class="dp-week" aria-hidden="true"><span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span></div>
+    <div class="dp-grid" id="dpGrid"></div>
+    <div class="dp-foot">
+      <button type="button" class="btn btn-plain" id="dpClear">Clear</button>
+      <button type="button" class="btn btn-surface" id="dpToday">Today</button>
+      <button type="button" class="btn btn-plain" id="dpCancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  "use strict";
+  var $ = function(s){ return document.querySelector(s); };
+  var $$ = function(s){ return Array.prototype.slice.call(document.querySelectorAll(s)); };
+
+  /* ---------- cloud sync (Firebase Realtime Database) ----------
+     Paste your database URL between the quotes so accounts, events and registrations
+     are the same on every device. It looks like:
+       https://your-project-default-rtdb.asia-southeast1.firebasedatabase.app
+     Left empty, everything stays on this device only. */
+  var CLOUD_URL = '';
+
+  /* ---------- icons ---------- */
+  var P = {
+    back:'<path d="M15 5l-7 7 7 7"/>',
+    chev:'<path d="M9 5l7 7-7 7"/>',
+    bell:'<path d="M6 8a6 6 0 0112 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 004 0"/>',
+    sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.900 4.900l1.400 1.400M17.700 17.700l1.400 1.400M2 12h2M20 12h2M4.900 19.100l1.400-1.400M17.700 6.300l1.400-1.400"/>',
+    moon:'<path d="M21 12.800A9 9 0 1111.200 3 7 7 0 0021 12.800z"/>',
+    building:'<path d="M4 21V9l8-6 8 6v12"/><path d="M9 21v-6h6v6M3 21h18"/>',
+    compass:'<circle cx="12" cy="12" r="9"/><path d="M15.500 8.500l-2 5-5 2 2-5z"/>',
+    zap:'<path d="M13 2L4.500 13.500H11L10 22l8.500-11.500H12z"/>',
+    percent:'<path d="M19 5L5 19"/><circle cx="7" cy="7" r="2.200"/><circle cx="17" cy="17" r="2.200"/>',
+    calendar:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+    book:'<path d="M4 4.500A2.500 2.500 0 016.500 2H20v15H6.500A2.500 2.500 0 004 19.500z"/><path d="M4 19.500A2.500 2.500 0 006.500 22H20v-5"/>',
+    note:'<path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
+    check:'<path d="M5 12.500l4.500 4.500L19 7.500"/>',
+    plus:'<path d="M12 5v14M5 12h14"/>',
+    pin:'<path d="M12 21s7-6.200 7-11.500A7 7 0 005 9.500C5 14.800 12 21 12 21z"/><circle cx="12" cy="9.500" r="2.500"/>',
+    clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    rupee:'<path d="M6 4h12M6 9h12M9 4c4.500 0 6 2 6 5s-1.500 5-6 5H8l7 7"/>',
+    users:'<circle cx="9" cy="8" r="3.500"/><path d="M2.500 20c.5-3.500 3-5.500 6.500-5.500s6 2 6.500 5.500"/><path d="M16 4.700a3.500 3.500 0 010 6.600M18.500 14.800c1.800.8 2.800 2.600 3 5.200"/>',
+    user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c.8-4 4-6 8-6s7.200 2 8 6"/>',
+    logout:'<path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/>',
+    megaphone:'<path d="M3 11v2a1 1 0 001 1h3l8 4V6L7 10H4a1 1 0 00-1 1z"/><path d="M19 9a4 4 0 010 6"/>',
+    eye:'<path d="M2 12s3.800-7 10-7 10 7 10 7-3.800 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+    search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>',
+    star:'<path d="M12 3.500l2.700 5.500 6 .900-4.350 4.250 1.030 6-5.380-2.830-5.380 2.830 1.030-6L3.300 9.900l6-.900z"/>',
+    globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.500 2.700 2.500 15.300 0 18M12 3c-2.500 2.700-2.500 15.300 0 18"/>',
+    cap:'<path d="M12 4l10 5-10 5L2 9z"/><path d="M6 11.500V17c0 1.700 2.700 3 6 3s6-1.300 6-3v-5.500"/>',
+    eyeoff:'<path d="M3 3l18 18"/><path d="M10.600 5.100A9.800 9.800 0 0112 5c6.200 0 10 7 10 7a17 17 0 01-3.200 4M6.500 6.600A16.500 16.500 0 002 12s3.800 7 10 7c1.500 0 2.800-.4 4-.9"/><path d="M9.900 9.900a3 3 0 004.200 4.200"/>'
+  };
+  function ic(n){ return '<svg viewBox="0 0 24 24" aria-hidden="true">' + P[n] + '</svg>'; }
+
+  /* ---------- data ---------- */
+  var SECTIONS = {
+    college:   {title:'Your college',           icon:'building', sub:'Notices, events and updates',   desc:'Everything happening in your own college will show up here.'},
+    explore:   {title:'Explore other colleges', icon:'compass',  sub:'See what other colleges offer', desc:'Events and opportunities from other colleges will show up here.'},
+    events:    {title:'Hackathons and events',  icon:'zap',      desc:'Hackathons and events from your college and other colleges will show up here.'},
+    attendance:{title:'Attendance calculator',  icon:'percent',  desc:'Work out your attendance and how many classes you can miss.'},
+    timetable: {title:'Exam timetable',         icon:'calendar', desc:'Your exam dates and timings will show up here.'},
+    resources: {title:'Exam resources',         icon:'book',     desc:'Study material and previous papers will show up here.'},
+    notes:     {title:'Notes',                  icon:'note',     desc:'Your notes for every subject will live here.'}
+  };
+  var REMINDERS = [
+    {t:'Register for the inter-college hackathon', d:'Closes in 2 days',                k:'events',     done:false},
+    {t:'Check your attendance before the cutoff',  d:'Today',                           k:'attendance', done:false},
+    {t:'Series test timetable is out',              d:'Starts next week',                k:'timetable',  done:false}
+  ];
+  var SUGGEST = [
+    {t:'Hackathons from other colleges', p:'See what is open for registration right now.',       k:'events',    i:'zap'},
+    {t:'Previous papers for your branch', p:'Practise with past questions before the series test.', k:'resources', i:'book'},
+    {t:'Colleges to explore',             p:'Find events and clubs outside your campus.',          k:'explore',   i:'compass'}
+  ];
+  var NOTIFS = [
+    {t:'Series test timetable is out',                 w:'10 minutes ago', k:'timetable',  read:false},
+    {t:'Registrations close in 2 days for the inter-college hackathon', w:'1 hour ago', k:'events', read:false},
+    {t:'Your attendance in Data Structures is 72%',    w:'Yesterday',      k:'attendance', read:false},
+    {t:'New notes added for Discrete Mathematics',     w:'2 days ago',     k:'notes',      read:true}
+  ];
+  var state = {name:'', email:'', verified:false, role:'', profile:null, org:null};
+
+  /* ---------- navigation ---------- */
+  var stack = [], current = null, pushed = 0;
+  function show(id, back){
+    $$('.screen').forEach(function(s){ s.classList.remove('active','back'); });
+    var el = $('#s-' + id);
+    el.classList.add('active');
+    if(back) el.classList.add('back');
+    current = id;
+    if(id === 'login' && loginEl.classList.contains('to-login')) placeOrbit(true);
+    var sc = el.querySelector('.scroll');
+    if(sc && !back) sc.scrollTop = 0;
+    updateBadge();
+  }
+  function go(id){
+    if(current) stack.push(current);
+    show(id, false);
+    try{ history.pushState({s:id}, ''); pushed++; }catch(e){}
+  }
+  function popScreen(){
+    if(stack.length) show(stack.pop(), true);
+  }
+  function goBack(){
+    if(!stack.length) return;
+    if(pushed > 0){ try{ history.back(); return; }catch(e){} }
+    popScreen();
+  }
+  window.addEventListener('popstate', function(){
+    if(pushed > 0) pushed--;
+    popScreen();
+  });
+  $$('.js-back').forEach(function(b){ b.innerHTML = ic('back'); b.addEventListener('click', goBack); });
+
+  /* ---------- toast ---------- */
+  var tt;
+  function toast(m){
+    var t = $('#toast'); t.textContent = m; t.classList.add('show');
+    clearTimeout(tt); tt = setTimeout(function(){ t.classList.remove('show'); }, 2400);
+  }
+
+  /* ---------- theme ---------- */
+  function currentTheme(){
+    var t = document.documentElement.getAttribute('data-theme');
+    if(t) return t;
+    return (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+  }
+  function applyTheme(t, save){
+    document.documentElement.setAttribute('data-theme', t);
+    var m = document.querySelector('meta[name="theme-color"]');
+    if(m) m.setAttribute('content', t === 'dark' ? '#0E1424' : '#F4F5F9');
+    $$('.js-theme').forEach(function(tb){
+      tb.innerHTML = ic(t === 'dark' ? 'sun' : 'moon');
+      tb.setAttribute('aria-label', t === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+    });
+    if(save){ try{ localStorage.setItem('collego-theme', t); }catch(e){} }
+  }
+  var savedTheme = null;
+  try{ savedTheme = localStorage.getItem('collego-theme'); }catch(e){}
+  applyTheme(savedTheme === 'light' || savedTheme === 'dark' ? savedTheme : 'dark', false);
+  $$('.js-theme').forEach(function(tb){
+    tb.addEventListener('click', function(){
+      var next = currentTheme() === 'dark' ? 'light' : 'dark';
+      applyTheme(next, true);
+      toast(next === 'dark' ? 'Dark theme on' : 'Light theme on');
+    });
+  });
+
+  /* ---------- Google sheet ---------- */
+  var sheet = $('#gSheet');
+  function openSheet(){
+    sheet.classList.add('open');
+    $('#gField').classList.remove('bad');
+    setTimeout(function(){ $('#gEmail').focus(); }, 60);
+  }
+  function closeSheet(){ sheet.classList.remove('open'); }
+  $('#btnGoogle').addEventListener('click', openSheet);
+  $('#gCancel').addEventListener('click', closeSheet);
+  sheet.addEventListener('click', function(e){ if(e.target === sheet) closeSheet(); });
+  function verifyGmail(){
+    var v = $('#gEmail').value.trim();
+    if(!/^[^\s@]+@gmail\.com$/i.test(v)){ $('#gField').classList.add('bad'); return; }
+    state.email = v; state.verified = true;
+    closeSheet();
+    whenSynced(function(){
+      loadDB();
+      var stu = findStudent(v);
+      if(stu){ toast('Gmail verified. Enter your password'); prepareSignin(stu.email); go('signin'); }
+      else { toast('Gmail verified'); prepareRegister(); go('register'); }
+    });
+  }
+  $('#gVerify').addEventListener('click', verifyGmail);
+  $('#gEmail').addEventListener('keydown', function(e){ if(e.key === 'Enter') verifyGmail(); });
+  $('#gEmail').addEventListener('input', function(){ $('#gField').classList.remove('bad'); });
+
+  /* ---------- registration ---------- */
+  function need(msg){ return function(v){ return v.trim() ? '' : msg; }; }
+  var FIELDS = [
+    {g:'About you'},
+    {id:'name',    label:'Full name',       type:'text', ac:'name',  ph:'Your full name', v:function(v){ return v.trim().length >= 2 ? '' : 'Enter your full name'; }},
+    {id:'phone',   label:'Phone number',    type:'tel',  ac:'tel',   im:'tel', ph:'10-digit mobile number', v:function(v){ return /^\d{10}$/.test(v.replace(/[\s-]/g,'').replace(/^\+91/,'')) ? '' : 'Enter a 10-digit mobile number'; }},
+    {g:'Your college'},
+    {id:'college', label:'College name',    type:'text', ac:'organization', ph:'Name of your college', v:need('Enter your college name')},
+    {id:'course',  label:'Course and branch', type:'text', ph:'e.g. B.Tech Computer Science', v:need('Enter your course and branch')},
+    {id:'year',    label:'Year of study',   type:'select', opts:['1st year','2nd year','3rd year','4th year'], v:need('Choose your year of study')},
+    {id:'regno',   label:'University register number', type:'text', ph:'Your register number', v:need('Enter your register number')},
+    {g:'Sign-in details'},
+    {id:'email',   label:'Email',           type:'email', ac:'email', im:'email', ph:'you@example.com', v:function(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) ? '' : 'Enter a valid email address'; }},
+    {id:'password',label:'Password',        type:'password', ac:'new-password', ph:'At least 6 characters', v:function(v){ return v.length >= 6 ? '' : 'Use at least 6 characters'; }},
+    {id:'confirm', label:'Confirm password',type:'password', ac:'new-password', ph:'Type the password again', v:function(v){ return v && v === $('#f-password').value ? '' : 'Passwords do not match'; }}
+  ];
+  function buildRegister(){
+    var h = '';
+    FIELDS.forEach(function(f, i){
+      if(f.g){ h += (i ? '</div>' : '') + '<div class="group"><h2>' + f.g + '</h2>'; return; }
+      h += '<div class="field" id="w-' + f.id + '"><label for="f-' + f.id + '">' + f.label + '</label><div class="control' + (f.type === 'select' ? ' sel' : '') + '">';
+      if(f.type === 'select'){
+        h += '<select id="f-' + f.id + '"><option value="">Select year</option>' + f.opts.map(function(o){ return '<option>' + o + '</option>'; }).join('') + '</select>';
+      } else {
+        h += '<input id="f-' + f.id + '" type="' + f.type + '"' + (f.ac ? ' autocomplete="' + f.ac + '"' : '') + (f.im ? ' inputmode="' + f.im + '"' : '') + ' placeholder="' + (f.ph || '') + '">';
+        if(f.type === 'password') h += '<button class="eye" type="button" data-eye="' + f.id + '" aria-label="Show password">' + ic('eye') + '</button>';
+      }
+      h += '</div><div class="err" id="e-' + f.id + '"></div>' + (f.id === 'email' ? '<div class="hint" id="emailHint" hidden>Verified with Google</div>' : '') + '</div>';
+    });
+    h += '</div>';
+    $('#regFields').innerHTML = h;
+
+    FIELDS.forEach(function(f){
+      if(!f.id) return;
+      var el = $('#f-' + f.id);
+      el.addEventListener('input', function(){ $('#w-' + f.id).classList.remove('bad'); });
+      el.addEventListener('change', function(){ $('#w-' + f.id).classList.remove('bad'); });
+      if(f.type !== 'select') el.addEventListener('blur', function(){ if(el.value) check(f); });
+    });
+    $$('[data-eye]').forEach(function(b){
+      b.addEventListener('click', function(){
+        var inp = $('#f-' + b.getAttribute('data-eye')), show = inp.type === 'password';
+        inp.type = show ? 'text' : 'password';
+        b.innerHTML = ic(show ? 'eyeoff' : 'eye');
+        b.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+      });
+    });
+  }
+  function check(f){
+    var msg = f.v($('#f-' + f.id).value);
+    $('#w-' + f.id).classList.toggle('bad', !!msg);
+    $('#e-' + f.id).textContent = msg;
+    return !msg;
+  }
+  function prepareRegister(){
+    var em = $('#f-email');
+    em.value = state.email;
+    em.readOnly = state.verified;
+    $('#emailHint').hidden = !state.verified;
+    $('#w-email').classList.remove('bad');
+  }
+  $('#btnRegister').addEventListener('click', function(){
+    var firstBad = null;
+    FIELDS.forEach(function(f){
+      if(!f.id) return;
+      if(!check(f) && !firstBad) firstBad = f;
+    });
+    if(firstBad){
+      var w = $('#w-' + firstBad.id);
+      w.scrollIntoView({behavior:'smooth', block:'center'});
+      setTimeout(function(){ $('#f-' + firstBad.id).focus({preventScroll:true}); }, 350);
+      toast('Fill in every field to continue');
+      return;
+    }
+    var profile = {
+      name: $('#f-name').value.trim(), email: $('#f-email').value.trim(), phone: $('#f-phone').value.trim(),
+      college: $('#f-college').value.trim(), course: $('#f-course').value.trim(),
+      year: $('#f-year').value, regno: $('#f-regno').value.trim()
+    };
+    var newPw = $('#f-password').value;
+    whenSynced(function(){
+      loadDB();
+      if(findStudent(profile.email)){
+        toast('This email already has an account. Sign in with your password.');
+        prepareSignin(profile.email);
+        go('signin');
+        return;
+      }
+      var acct = {email:profile.email, name:profile.name, phone:profile.phone, college:profile.college,
+                  course:profile.course, year:profile.year, regno:profile.regno, createdAt:Date.now()};
+      setPw(acct, newPw);
+      db.students.push(acct);
+      saveDB();
+      state.name = profile.name;
+      state.role = 'student';
+      state.profile = profile;
+      renderHome();
+      toast('Account created');
+      go('home');
+    });
+  });
+
+  /* ---------- home ---------- */
+  function buildTiles(){
+    var order = ['college','explore','events','attendance','timetable','resources','notes'];
+    $('#tiles').innerHTML = order.map(function(k){
+      var s = SECTIONS[k];
+      var cls = 'tile' + (k === 'college' ? ' big accent' : k === 'explore' ? ' big' : k === 'events' ? ' wide' : '');
+      var inner = '<span class="ico">' + ic(s.icon) + '</span>';
+      if(k === 'events') inner += '<span class="tt">' + s.title + '</span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true">' + P.chev + '</svg>';
+      else inner += '<span class="tt">' + s.title + (s.sub ? '<span class="ts">' + s.sub + '</span>' : '') + '</span>';
+      return '<button class="' + cls + '" data-k="' + k + '">' + inner + '</button>';
+    }).join('');
+    $$('#tiles .tile').forEach(function(b){ b.addEventListener('click', function(){ openSection(b.getAttribute('data-k')); }); });
+  }
+  function renderReminders(){
+    var left = REMINDERS.filter(function(r){ return !r.done; }).length;
+    $('#remCount').textContent = left ? left + ' to do' : 'All done';
+    var box = $('#reminders'); box.innerHTML = '';
+    REMINDERS.forEach(function(r, i){
+      var d = document.createElement('div');
+      d.className = 'rem' + (r.done ? ' done' : '');
+      d.innerHTML = '<button class="check" aria-label="' + (r.done ? 'Mark as not done' : 'Mark as done') + '">' + ic('check') + '</button>' +
+        '<div class="txt"><b></b><span></span></div>' +
+        '<button class="open" aria-label="Open">' + ic('chev') + '</button>';
+      d.querySelector('b').textContent = r.t;
+      d.querySelector('span').textContent = r.d;
+      d.querySelector('.check').addEventListener('click', function(){ r.done = !r.done; renderReminders(); });
+      d.querySelector('.txt').addEventListener('click', function(){ openSection(r.k); });
+      d.querySelector('.open').addEventListener('click', function(){ openSection(r.k); });
+      box.appendChild(d);
+    });
+  }
+  function renderSuggest(){
+    var box = $('#suggest'); box.innerHTML = '';
+    SUGGEST.forEach(function(s){
+      var b = document.createElement('button');
+      b.className = 'sug';
+      b.innerHTML = '<span class="ico">' + ic(s.i) + '</span><b></b><p></p><em>Open</em>';
+      b.querySelector('b').textContent = s.t;
+      b.querySelector('p').textContent = s.p;
+      b.addEventListener('click', function(){ openSection(s.k); });
+      box.appendChild(b);
+    });
+  }
+  function renderHome(){
+    $('#helloName').textContent = state.name ? state.name.split(/\s+/)[0] : 'there';
+    renderHomeAlert();
+  }
+  /* live events the student has not registered for yet */
+  function renderHomeAlert(){
+    var sec = $('#homeAlertSec'), box = $('#homeAlert');
+    if(!sec || !box) return;
+    loadDB();
+    var list = db.events.filter(function(e){
+      return e.status === 'live' && !isEnded(e) && !isClosed(e) && !myReg(e);
+    }).sort(function(a, b){ return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; });
+    sec.hidden = !list.length;
+    $('#homeAlertCount').textContent = list.length ? list.length + (list.length === 1 ? ' event' : ' events') : '';
+    box.innerHTML = '';
+    list.slice(0, 5).forEach(function(ev){
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'alert';
+      b.innerHTML = '<span class="ico">' + ic('zap') + '</span><div><b><i class="live-dot"></i>' + esc(ev.title) + ' is live</b>' +
+        '<span>You have not registered yet \u00B7 register before ' + esc(fmtDate(ev.deadline)) + ' \u00B7 ' + esc(fmtFee(ev.fee)) + '</span></div>';
+      b.addEventListener('click', function(){ openEvent(ev.id); });
+      box.appendChild(b);
+    });
+  }
+
+  /* ---------- notifications (student, organizer and admin share this screen) ---------- */
+  function badgeEl(){ return state.role === 'organizer' ? $('#bellBadgeO') : state.role === 'admin' ? $('#bellBadgeA') : $('#bellBadge'); }
+  function bellEl(){ return state.role === 'organizer' ? $('#btnBellO') : state.role === 'admin' ? $('#btnBellA') : $('#btnBell'); }
+  function allNotifs(){
+    var list = [];
+    if(state.role) list = dynNotifs().map(function(n){
+      return {t:n.t, w:n.w, read:n.read, mark:function(){ markSeen(n.key); }, open:function(){ openEvent(n.evId); }};
+    });
+    if(!state.role || state.role === 'student') NOTIFS.forEach(function(n){
+      list.push({t:n.t, w:n.w, read:n.read, mark:function(){ n.read = true; }, open:function(){ openSection(n.k); }});
+    });
+    return list;
+  }
+  function updateBadge(){
+    var n = allNotifs().filter(function(x){ return !x.read; }).length;
+    var b = badgeEl(); b.textContent = n > 99 ? '99+' : n; b.hidden = !n;
+    bellEl().setAttribute('aria-label', n ? 'Notifications, ' + n + ' unread' : 'Notifications');
+    $('#btnReadAll').disabled = !n;
+  }
+  function renderNotifs(){
+    var box = $('#notifs'); box.innerHTML = '';
+    var list = allNotifs();
+    if(!list.length) box.innerHTML = emptyHTML('bell', 'No notifications yet', 'Updates about your events will show up here.');
+    list.forEach(function(n){
+      var b = document.createElement('button');
+      b.className = 'nrow' + (n.read ? ' read' : '');
+      b.innerHTML = '<i class="nd"></i><div><b></b><span></span></div>';
+      b.querySelector('b').textContent = n.t;
+      b.querySelector('span').textContent = n.w;
+      b.addEventListener('click', function(){ n.mark(); updateBadge(); renderNotifs(); n.open(); });
+      box.appendChild(b);
+    });
+    updateBadge();
+  }
+  $('#btnBell').innerHTML = '<span>' + ic('bell') + '</span><span class="badge" id="bellBadge" hidden>0</span>';
+  $('#btnBellO').innerHTML = '<span>' + ic('bell') + '</span><span class="badge" id="bellBadgeO" hidden>0</span>';
+  $('#btnBellA').innerHTML = '<span>' + ic('bell') + '</span><span class="badge" id="bellBadgeA" hidden>0</span>';
+  function openNotifs(){ renderNotifs(); go('notifications'); }
+  $('#btnBell').addEventListener('click', openNotifs);
+  $('#btnBellO').addEventListener('click', openNotifs);
+  $('#btnBellA').addEventListener('click', openNotifs);
+  $('#btnReadAll').addEventListener('click', function(){
+    allNotifs().forEach(function(n){ n.mark(); });
+    renderNotifs();
+    toast('All notifications marked as read');
+  });
+
+  /* ---------- section page ---------- */
+  function openSection(k){
+    if(k === 'events'){ openStudentEvents(); return; }
+    if(k === 'explore'){ openColleges(); return; }
+    var s = SECTIONS[k];
+    $('#secTitle').textContent = s.title;
+    $('#secH').textContent = s.title;
+    $('#secDesc').textContent = s.desc;
+    $('#secIcon').innerHTML = ic(s.icon);
+    go('section');
+  }
+
+  /* =====================================================================
+     ROLES: student (above) + organizer + admin
+     Flow: organizer sends an event -> admin approves or rejects (with a reason)
+           -> approved events go live for students -> students register
+           -> organizer sees who registered, admin sees the count.
+     Events are kept in localStorage so all three accounts see the same data.
+     ===================================================================== */
+  var DB_KEY = 'collego-events-v1';
+  var ADMIN = {email:'admin@collego.app', password:'admin123'};
+  var db = {organizers:[], students:[], events:[], seen:{}};
+  var curEventId = null, editingId = null, admTab = 'pending';
+  var staff = {role:'organizer', mode:'signin'};
+
+  /* ----- storage + small helpers ----- */
+  function loadDB(){
+    try{
+      var raw = localStorage.getItem(DB_KEY);
+      if(raw){
+        var d = JSON.parse(raw);
+        if(d && d.events && d.organizers){ if(!d.seen) d.seen = {}; if(!d.students) d.students = []; db = d; }
+      }
+    }catch(e){}
+    ensureColleges();
+  }
+  function saveDB(){ try{ localStorage.setItem(DB_KEY, JSON.stringify(db)); }catch(e){} cloudSoon(); }
+  function ensureColleges(){
+    if(!db.colleges){ db.colleges = seedColleges(); saveDB(); }
+    return db.colleges;
+  }
+  /* ----- password hashing (SHA-256), so passwords are not kept as plain text ----- */
+  function sha256(ascii){
+    function rr(v, a){ return (v >>> a) | (v << (32 - a)); }
+    var mathPow = Math.pow, maxWord = mathPow(2, 32), result = '', i, j;
+    var words = [], asciiBitLength = ascii.length * 8;
+    var hash = sha256.h = sha256.h || [], k = sha256.k = sha256.k || [], primeCounter = k.length;
+    var isComposite = {};
+    for(var candidate = 2; primeCounter < 64; candidate++){
+      if(!isComposite[candidate]){
+        for(i = 0; i < 313; i += candidate) isComposite[i] = candidate;
+        hash[primeCounter] = (mathPow(candidate, .5) * maxWord) | 0;
+        k[primeCounter++] = (mathPow(candidate, 1 / 3) * maxWord) | 0;
+      }
+    }
+    ascii += '\x80';
+    while(ascii.length % 64 - 56) ascii += '\x00';
+    for(i = 0; i < ascii.length; i++){
+      j = ascii.charCodeAt(i);
+      words[i >> 2] |= j << ((3 - i) % 4) * 8;
+    }
+    words[words.length] = ((asciiBitLength / maxWord) | 0);
+    words[words.length] = (asciiBitLength);
+    for(j = 0; j < words.length;){
+      var w = words.slice(j, j += 16), oldHash = hash;
+      hash = hash.slice(0, 8);
+      for(i = 0; i < 64; i++){
+        var w15 = w[i - 15], w2 = w[i - 2];
+        var a = hash[0], e = hash[4];
+        var temp1 = hash[7] + (rr(e, 6) ^ rr(e, 11) ^ rr(e, 25)) + ((e & hash[5]) ^ (~e & hash[6])) + k[i]
+          + (w[i] = (i < 16) ? w[i] : (w[i - 16] + (rr(w15, 7) ^ rr(w15, 18) ^ (w15 >>> 3)) + w[i - 7] + (rr(w2, 17) ^ rr(w2, 19) ^ (w2 >>> 10))) | 0);
+        var temp2 = (rr(a, 2) ^ rr(a, 13) ^ rr(a, 22)) + ((a & hash[1]) ^ (a & hash[2]) ^ (hash[1] & hash[2]));
+        hash = [(temp1 + temp2) | 0].concat(hash);
+        hash[4] = (hash[4] + temp1) | 0;
+      }
+      for(i = 0; i < 8; i++) hash[i] = (hash[i] + oldHash[i]) | 0;
+    }
+    for(i = 0; i < 8; i++){
+      for(j = 3; j + 1; j--){
+        var b = (hash[i] >> (j * 8)) & 255;
+        result += ((b < 16) ? 0 : '') + b.toString(16);
+      }
+    }
+    return result;
+  }
+  function hashPw(email, pw){ return sha256(unescape(encodeURIComponent('collego:' + String(email).trim().toLowerCase() + ':' + pw))); }
+  function pwMatches(acct, pw){ return acct.pwh ? acct.pwh === hashPw(acct.email, pw) : acct.password === pw; }
+  function setPw(acct, pw){ acct.pwh = hashPw(acct.email, pw); delete acct.password; }
+  function findStudent(email){
+    var e = String(email || '').trim().toLowerCase();
+    for(var i = 0; i < db.students.length; i++) if(String(db.students[i].email).toLowerCase() === e) return db.students[i];
+    return null;
+  }
+
+  /* ----- cloud sync: Firebase Realtime Database over plain web requests -----
+     Every account, event, registration and review is one small record. Each device
+     keeps a local copy, sends the records it changed and receives the ones others changed. */
+  var CLOUD = {url:'', on:false, tree:null, base:{}, hasBase:false, loaded:false, pushing:false, again:false,
+               streamed:false, lastStream:0, waiters:[], timer:null, warned:false};
+  var DEPTH = {orgs:1, studs:1, events:1, clg:1, regs:2, ecom:2, crev:2, seen:2};
+  function encKey(s){ return String(s).replace(/[%.$#\[\]\/]/g, function(c){ return '%' + ('0' + c.charCodeAt(0).toString(16)).slice(-2).toUpperCase(); }); }
+  function decKey(s){ return String(s).replace(/%([0-9A-F]{2})/g, function(m, h){ return String.fromCharCode(parseInt(h, 16)); }); }
+  function mailKey(s){ return encKey(String(s).toLowerCase()); }
+  /* the database drops empty values, so compare records without them */
+  function norm(v){
+    if(v === null || v === undefined || v === '') return undefined;
+    if(Array.isArray(v)){ var a = v.map(norm).filter(function(x){ return x !== undefined; }); return a.length ? a : undefined; }
+    if(typeof v === 'object'){
+      var o = {}, n = 0;
+      Object.keys(v).sort().forEach(function(k){ var x = norm(v[k]); if(x !== undefined){ o[k] = x; n++; } });
+      return n ? o : undefined;
+    }
+    return v;
+  }
+  function flatOf(docs){
+    var f = {};
+    Object.keys(docs).forEach(function(p){ var n = norm(docs[p]); if(n !== undefined) f[p] = JSON.stringify(n); });
+    return f;
+  }
+  function dbToDocs(d){
+    var docs = {};
+    (d.organizers || []).forEach(function(o){ docs['orgs/' + o.id] = o; });
+    (d.students || []).forEach(function(s){ docs['studs/' + mailKey(s.email)] = s; });
+    (d.events || []).forEach(function(ev){
+      var c = {};
+      Object.keys(ev).forEach(function(k){ if(k !== 'regs' && k !== 'comments') c[k] = ev[k]; });
+      docs['events/' + ev.id] = c;
+      (ev.regs || []).forEach(function(r){ docs['regs/' + ev.id + '/' + mailKey(r.acct || r.email)] = r; });
+      (ev.comments || []).forEach(function(r){ docs['ecom/' + ev.id + '/' + mailKey(r.email)] = r; });
+    });
+    (d.colleges || []).forEach(function(cl){
+      var c = {};
+      Object.keys(cl).forEach(function(k){ if(k !== 'reviews') c[k] = cl[k]; });
+      docs['clg/' + cl.id] = c;
+      (cl.reviews || []).forEach(function(r){ docs['crev/' + cl.id + '/' + mailKey(r.email)] = r; });
+    });
+    Object.keys(d.seen || {}).forEach(function(k){
+      var m = d.seen[k] || {};
+      Object.keys(m).forEach(function(k2){ if(m[k2]) docs['seen/' + encKey(k) + '/' + encKey(k2)] = true; });
+    });
+    return docs;
+  }
+  function treeToDocs(t){
+    var docs = {};
+    Object.keys(DEPTH).forEach(function(c){
+      var n = t && t[c];
+      if(!n || typeof n !== 'object') return;
+      Object.keys(n).forEach(function(a){
+        if(DEPTH[c] === 1){ if(n[a] !== null && typeof n[a] === 'object') docs[c + '/' + a] = n[a]; }
+        else if(n[a] && typeof n[a] === 'object') Object.keys(n[a]).forEach(function(b){ if(n[a][b] != null) docs[c + '/' + a + '/' + b] = n[a][b]; });
+      });
+    });
+    return docs;
+  }
+  function fillStr(o, keys){ keys.forEach(function(k){ if(o[k] == null) o[k] = ''; }); return o; }
+  function docsToDb(docs){
+    var d = {organizers:[], students:[], events:[], seen:{}}, evs = {}, cls = {}, paths = Object.keys(docs);
+    function clone(v){ return JSON.parse(JSON.stringify(v)); }
+    paths.forEach(function(p){
+      var c = p.split('/')[0], v = docs[p];
+      if(c === 'orgs') d.organizers.push(clone(v));
+      else if(c === 'studs') d.students.push(clone(v));
+      else if(c === 'events'){
+        var ev = fillStr(clone(v), ['desc', 'time', 'venue', 'reason', 'collegeId', 'collegeName', 'orgEmail', 'orgName', 'club']);
+        if(ev.decidedAt === undefined) ev.decidedAt = null;
+        ev.regs = []; ev.comments = [];
+        d.events.push(ev); evs[ev.id] = ev;
+      } else if(c === 'clg'){
+        var cl = fillStr(clone(v), ['website', 'courses', 'about']);
+        cl.reviews = [];
+        (d.colleges = d.colleges || []).push(cl); cls[cl.id] = cl;
+      }
+    });
+    paths.forEach(function(p){
+      var parts = p.split('/'), c = parts[0], v = docs[p];
+      if(c === 'regs' && evs[parts[1]]) evs[parts[1]].regs.push(fillStr(clone(v), ['name', 'email', 'phone', 'college', 'course', 'year', 'regno', 'dept', 'idcard', 'teamType', 'teamName', 'members', 'food', 'txn', 'shot', 'ticket', 'acct']));
+      else if(c === 'ecom' && evs[parts[1]]) evs[parts[1]].comments.push(fillStr(clone(v), ['text']));
+      else if(c === 'crev' && cls[parts[1]]) cls[parts[1]].reviews.push(fillStr(clone(v), ['text']));
+      else if(c === 'seen'){ var a = decKey(parts[1]), b = decKey(parts[2]); (d.seen[a] = d.seen[a] || {})[b] = true; }
+    });
+    return d;
+  }
+  function tset(path, data){
+    var parts = String(path).split('/').filter(Boolean);
+    if(!parts.length){ CLOUD.tree = (data && typeof data === 'object') ? data : {}; return; }
+    if(CLOUD.tree === null) CLOUD.tree = {};
+    var node = CLOUD.tree;
+    for(var i = 0; i < parts.length - 1; i++){
+      if(node[parts[i]] === null || node[parts[i]] === undefined || typeof node[parts[i]] !== 'object') node[parts[i]] = {};
+      node = node[parts[i]];
+    }
+    var last = parts[parts.length - 1];
+    if(data === null || data === undefined) delete node[last]; else node[last] = data;
+  }
+  function cloudSoon(ms){
+    if(!CLOUD.on) return;
+    clearTimeout(CLOUD.timer);
+    CLOUD.timer = setTimeout(cloudMerge, ms == null ? 150 : ms);
+  }
+  function cloudFail(err){
+    try{ console.warn('Cloud sync problem:', err && err.message ? err.message : err); }catch(e){}
+    if(!CLOUD.warned){
+      CLOUD.warned = true;
+      toast('Cannot reach the cloud. Your changes are saved on this device and will sync later.');
+    }
+    cloudSoon(8000);
+  }
+  /* compare this device, the cloud and the last synced copy, record by record */
+  function cloudMerge(){
+    if(!CLOUD.on || CLOUD.tree === null) return;
+    if(CLOUD.pushing){ CLOUD.again = true; return; }
+    var localDocs = dbToDocs(db), localFlat = flatOf(localDocs);
+    var remoteDocs = treeToDocs(CLOUD.tree), remoteFlat = flatOf(remoteDocs);
+    var first = !CLOUD.hasBase, base = CLOUD.base, push = {}, apply = [], newBase = {}, done = {};
+    Object.keys(localFlat).concat(Object.keys(remoteFlat)).forEach(function(p){
+      if(done[p]) return;
+      done[p] = true;
+      var L = localFlat[p], R = remoteFlat[p], B = base[p];
+      if(L === undefined){ if(R !== undefined){ apply.push(p); newBase[p] = R; } return; }
+      if(first){
+        if(R === undefined){ push[p] = norm(localDocs[p]); newBase[p] = L; }
+        else { if(L !== R) apply.push(p); newBase[p] = R; }
+        return;
+      }
+      if(L !== B){
+        if(L !== R) push[p] = norm(localDocs[p]);
+        newBase[p] = L;
+      } else if(R !== B){
+        if(R === undefined) newBase[p] = L;
+        else { apply.push(p); newBase[p] = R; }
+      } else newBase[p] = B;
+    });
+    var keys = Object.keys(push);
+    function finish(){
+      var changed = false;
+      if(apply.length){
+        var nowDocs = dbToDocs(db), nowFlat = flatOf(nowDocs), fin = {};
+        Object.keys(nowDocs).forEach(function(p){ fin[p] = nowDocs[p]; });
+        apply.forEach(function(p){ if(nowFlat[p] === localFlat[p]){ fin[p] = remoteDocs[p]; changed = true; } });
+        if(changed){
+          db = docsToDb(fin);
+          try{ localStorage.setItem(DB_KEY, JSON.stringify(db)); }catch(e){}
+        }
+      }
+      CLOUD.base = newBase; CLOUD.hasBase = true;
+      if(!CLOUD.loaded){ CLOUD.loaded = true; CLOUD.waiters.splice(0).forEach(function(f){ f(); }); }
+      if(changed) refreshViews();
+    }
+    if(!keys.length){ finish(); return; }
+    var body = {};
+    keys.forEach(function(p){ body[p] = push[p]; });
+    CLOUD.pushing = true;
+    fetch(CLOUD.url + '/collego.json', {method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)})
+      .then(function(r){ if(!r.ok) throw new Error('HTTP ' + r.status); })
+      .then(function(){
+        keys.forEach(function(p){ tset('/' + p, push[p]); });
+        CLOUD.warned = false;
+        finish();
+      })
+      .catch(cloudFail)
+      .then(function(){ CLOUD.pushing = false; if(CLOUD.again){ CLOUD.again = false; cloudSoon(50); } });
+  }
+  function streamAlive(){ return CLOUD.streamed && Date.now() - CLOUD.lastStream < 75000; }
+  function cloudPull(){
+    if(!CLOUD.on || streamAlive()) return;
+    fetch(CLOUD.url + '/collego.json', {cache:'no-store'})
+      .then(function(r){ if(!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function(t){
+        if(streamAlive()) return;
+        CLOUD.tree = (t && typeof t === 'object') ? t : {};
+        CLOUD.warned = false;
+        cloudSoon(0);
+      })
+      .catch(cloudFail);
+  }
+  function cloudEvent(e, isPatch){
+    var m;
+    try{ m = JSON.parse(e.data); }catch(x){ return; }
+    if(!m) return;
+    CLOUD.streamed = true; CLOUD.lastStream = Date.now();
+    if(isPatch){
+      var root = String(m.path || '/').replace(/\/$/, '');
+      Object.keys(m.data || {}).forEach(function(k){ tset(root + '/' + k, m.data[k]); });
+    } else tset(m.path || '/', m.data);
+    cloudSoon(60);
+  }
+  function cloudStart(){
+    CLOUD.url = String(CLOUD_URL || '').trim().replace(/\/+$/, '');
+    CLOUD.on = /^https:\/\/\S+$/.test(CLOUD.url);
+    if(!CLOUD.on) return;
+    cloudPull();
+    try{
+      var es = new EventSource(CLOUD.url + '/collego.json');
+      es.addEventListener('put', function(e){ cloudEvent(e, false); });
+      es.addEventListener('patch', function(e){ cloudEvent(e, true); });
+      es.addEventListener('keep-alive', function(){ CLOUD.lastStream = Date.now(); });
+      es.addEventListener('cancel', function(){ CLOUD.streamed = false; });
+      es.addEventListener('auth_revoked', function(){ CLOUD.streamed = false; });
+    }catch(e){}
+    setInterval(cloudPull, 20000);
+    document.addEventListener('visibilitychange', function(){ if(!document.hidden) cloudPull(); });
+    window.addEventListener('online', cloudPull);
+  }
+  /* run something once the first copy from the cloud has arrived (or after a short wait) */
+  function whenSynced(cb){
+    if(!CLOUD.on || CLOUD.loaded){ cb(); return; }
+    var fin = false;
+    function go2(){ if(fin) return; fin = true; cb(); }
+    CLOUD.waiters.push(go2);
+    setTimeout(go2, 4500);
+  }
+
+  function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+  function esc(s){
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[c];
+    });
+  }
+  function pad(n){ return (n < 10 ? '0' : '') + n; }
+  function todayStr(){ var d = new Date(); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  var DAY_S = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  var MON_S = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  /* dates are always written day, month, year (for example Mon, 21 Sep 2026) */
+  function fmtDate(s){
+    var p = String(s).split('-'), d = new Date(+p[0], +p[1] - 1, +p[2]);
+    return DAY_S[d.getDay()] + ', ' + d.getDate() + ' ' + MON_S[d.getMonth()] + ' ' + d.getFullYear();
+  }
+  function fmtDay(ts, withYear){
+    var d = new Date(ts);
+    return d.getDate() + ' ' + MON_S[d.getMonth()] + (withYear ? ' ' + d.getFullYear() : '');
+  }
+  function fmtFee(n){ return n > 0 ? '\u20B9' + n : 'Free'; }
+  function ago(ts){
+    var m = Math.floor((Date.now() - ts) / 60000);
+    if(m < 1) return 'Just now';
+    if(m < 60) return m + (m === 1 ? ' minute ago' : ' minutes ago');
+    var h = Math.floor(m / 60);
+    if(h < 24) return h + (h === 1 ? ' hour ago' : ' hours ago');
+    var d = Math.floor(h / 24);
+    if(d === 1) return 'Yesterday';
+    if(d < 7) return d + ' days ago';
+    return fmtDay(ts);
+  }
+  function agoL(ts){ var a = ago(ts); return a.charAt(0).toLowerCase() + a.slice(1); }
+  function findEvent(id){
+    for(var i = 0; i < db.events.length; i++) if(db.events[i].id === id) return db.events[i];
+    return null;
+  }
+  function regCount(ev){ return (ev.regs || []).length; }
+  function isClosed(ev){ return todayStr() > ev.deadline; }
+  function isEnded(ev){ return todayStr() > ev.date; }
+  function myReg(ev){
+    if(!state.profile) return null;
+    var e = state.profile.email.toLowerCase(), r = ev.regs || [];
+    for(var i = 0; i < r.length; i++){
+      if(String(r[i].email).toLowerCase() === e) return r[i];
+      if(r[i].acct && String(r[i].acct).toLowerCase() === e) return r[i];
+    }
+    return null;
+  }
+  function totalRegs(list){
+    var n = 0;
+    list.forEach(function(e){ if(e.status === 'live') n += regCount(e); });
+    return n;
+  }
+  function statusChip(ev){
+    if(ev.status === 'live') return '<span class="chip ok">Live</span>';
+    if(ev.status === 'rejected') return '<span class="chip bad">Rejected</span>';
+    return '<span class="chip warn">Waiting for approval</span>';
+  }
+  function emptyHTML(icon, h, p){
+    return '<div class="soon compact"><div class="big-ico">' + ic(icon) + '</div><h2>' + esc(h) + '</h2><p>' + esc(p) + '</p></div>';
+  }
+  function statHTML(items){
+    return items.map(function(s){ return '<div class="stat"><b>' + s[0] + '</b><span>' + esc(s[1]) + '</span></div>'; }).join('');
+  }
+
+  /* ----- notifications built from the shared data ----- */
+  function seenKey(){
+    if(state.role === 'organizer' && state.org) return 'org:' + state.org.id;
+    if(state.role === 'admin') return 'admin';
+    return 'stu:' + (state.profile ? state.profile.email.toLowerCase() : '');
+  }
+  function markSeen(key){
+    var k = seenKey();
+    if(!db.seen[k]) db.seen[k] = {};
+    db.seen[k][key] = true;
+    saveDB();
+  }
+  function dynNotifs(){
+    loadDB();
+    var out = [], seen = db.seen[seenKey()] || {};
+    function add(key, t, ts, evId){ out.push({key:key, t:t, w:ago(ts), ts:ts, read:!!seen[key], evId:evId}); }
+    db.events.forEach(function(ev){
+      if(state.role === 'student'){
+        if(ev.status === 'live' && !isEnded(ev) && !isClosed(ev) && !myReg(ev)) add('live:' + ev.id + ':' + ev.decidedAt, 'Live now, not registered yet: ' + ev.title, ev.decidedAt, ev.id);
+      } else if(state.role === 'organizer'){
+        if(!state.org || ev.orgId !== state.org.id) return;
+        if(ev.status === 'live') add('dec:' + ev.id + ':' + ev.decidedAt, 'Approved: \u201C' + ev.title + '\u201D is now live for students', ev.decidedAt, ev.id);
+        if(ev.status === 'rejected') add('dec:' + ev.id + ':' + ev.decidedAt, 'Rejected: \u201C' + ev.title + '\u201D. Reason: ' + (ev.reason.length > 90 ? ev.reason.slice(0, 90) + '\u2026' : ev.reason), ev.decidedAt, ev.id);
+        (ev.regs || []).forEach(function(r){ add('reg:' + ev.id + ':' + r.email.toLowerCase(), r.name + ' registered for \u201C' + ev.title + '\u201D', r.at, ev.id); });
+      } else if(state.role === 'admin'){
+        if(ev.status === 'pending') add('sub:' + ev.id + ':' + ev.submittedAt, 'New event to review: \u201C' + ev.title + '\u201D from ' + ev.club, ev.submittedAt, ev.id);
+      }
+    });
+    out.sort(function(a, b){ return b.ts - a.ts; });
+    return out.slice(0, 60);
+  }
+
+  /* ----- generic form helpers (prefix p: 's' = staff sign in, 'e' = event form) ----- */
+  function val(id){ return $('#' + id).value; }
+  function fbad(p, id, msg){
+    $('#' + p + 'w-' + id).classList.toggle('bad', !!msg);
+    $('#' + p + 'e-' + id).textContent = msg || '';
+    return !msg;
+  }
+  function applyChecks(p, checks){
+    var first = null;
+    checks.forEach(function(c){ if(!fbad(p, c[0], c[1]) && !first) first = c[0]; });
+    if(first){
+      $('#' + p + 'w-' + first).scrollIntoView({behavior:'smooth', block:'center'});
+      setTimeout(function(){ $('#' + p + 'f-' + first).focus({preventScroll:true}); }, 350);
+    }
+    return !first;
+  }
+  $$('#s-staff .field, #s-signin .field, #s-create .field, #s-form .field, #fpSheet .field, #s-addcollege .field, #rvSheet .field').forEach(function(w){
+    function clear(){ w.classList.remove('bad'); }
+    w.addEventListener('input', clear);
+    w.addEventListener('change', clear);
+  });
+  var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  /* ----- sign in: organizer + admin ----- */
+  function staffUI(){
+    var org = staff.role === 'organizer', create = org && staff.mode === 'create';
+    $('#stOrg').setAttribute('aria-pressed', org ? 'true' : 'false');
+    $('#stAdm').setAttribute('aria-pressed', org ? 'false' : 'true');
+    $('#sw-name').hidden = !create;
+    $('#sw-club').hidden = !create;
+    $('#stMode').hidden = !org;
+    $('#stAdminHint').hidden = org;
+    $('#stTitle').textContent = create ? 'Create organizer account' : org ? 'Organizer sign in' : 'Admin sign in';
+    $('#stSub').textContent = create ? 'Set up an account to send events to the admin for approval.'
+      : org ? 'Sign in to send events to the admin and see who registered.'
+      : 'Sign in to review the events sent by organizers.';
+    $('#stMode').textContent = create ? 'Already have an account? Sign in' : 'New organizer? Create an account';
+    $('#stSubmit').textContent = create ? 'Create account' : 'Sign in';
+    $('#sf-password').autocomplete = create ? 'new-password' : 'current-password';
+    ['name', 'club', 'email', 'password'].forEach(function(k){ fbad('s', k, ''); });
+  }
+  $('#stOrg').addEventListener('click', function(){ staff.role = 'organizer'; staffUI(); });
+  $('#stAdm').addEventListener('click', function(){ staff.role = 'admin'; staff.mode = 'signin'; staffUI(); });
+  $('#stMode').addEventListener('click', function(){ staff.mode = staff.mode === 'create' ? 'signin' : 'create'; staffUI(); });
+  $('#sfEye').innerHTML = ic('eye');
+  $('#sfEye').addEventListener('click', function(){
+    var inp = $('#sf-password'), show = inp.type === 'password';
+    inp.type = show ? 'text' : 'password';
+    this.innerHTML = ic(show ? 'eyeoff' : 'eye');
+    this.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+  });
+  $('#btnStaff').addEventListener('click', function(){
+    staff.role = 'organizer'; staff.mode = 'signin';
+    staffUI();
+    go('staff');
+  });
+  function staffSubmit(){ whenSynced(staffSubmitNow); }
+  function staffSubmitNow(){
+    loadDB();
+    var email = val('sf-email').trim(), pw = val('sf-password'), emailOk = EMAIL_RE.test(email), checks;
+    if(staff.role === 'admin'){
+      checks = [['email', emailOk ? '' : 'Enter a valid email address'], ['password', pw ? '' : 'Enter your password']];
+      if(!applyChecks('s', checks)) return;
+      if(email.toLowerCase() !== ADMIN.email || pw !== ADMIN.password){ fbad('s', 'password', 'Email or password is incorrect'); return; }
+      finishStaff('admin', null);
+      return;
+    }
+    if(staff.mode === 'create'){
+      var name = val('sf-name').trim(), club = val('sf-club').trim();
+      var taken = db.organizers.some(function(o){ return o.email.toLowerCase() === email.toLowerCase(); });
+      checks = [
+        ['name', name.length >= 2 ? '' : 'Enter your full name'],
+        ['club', club ? '' : 'Enter your club or organization'],
+        ['email', !emailOk ? 'Enter a valid email address' : taken ? 'An account with this email already exists. Sign in instead.' : ''],
+        ['password', pw.length >= 6 ? '' : 'Use at least 6 characters']
+      ];
+      if(!applyChecks('s', checks)) return;
+      var acct = {id:uid(), name:name, club:club, email:email};
+      setPw(acct, pw);
+      db.organizers.push(acct);
+      saveDB();
+      toast('Organizer account created');
+      finishStaff('organizer', acct);
+      return;
+    }
+    checks = [['email', emailOk ? '' : 'Enter a valid email address'], ['password', pw ? '' : 'Enter your password']];
+    if(!applyChecks('s', checks)) return;
+    var found = null;
+    db.organizers.forEach(function(o){ if(o.email.toLowerCase() === email.toLowerCase() && pwMatches(o, pw)) found = o; });
+    if(!found){ fbad('s', 'password', 'Email or password is incorrect'); return; }
+    if(!found.pwh){ setPw(found, pw); saveDB(); }
+    finishStaff('organizer', found);
+  }
+  function finishStaff(role, acct){
+    state.role = role; state.org = acct;
+    curEventId = null;
+    ['name', 'club', 'email', 'password'].forEach(function(k){ $('#sf-' + k).value = ''; });
+    if(role === 'organizer'){ renderOrg(); go('org'); }
+    else { admTab = 'pending'; renderAdmin(); go('adm'); }
+  }
+  $('#stSubmit').addEventListener('click', staffSubmit);
+  $$('#s-staff input').forEach(function(i){ i.addEventListener('keydown', function(e){ if(e.key === 'Enter') staffSubmit(); }); });
+  function signOut(){
+    state.role = ''; state.org = null; curEventId = null; editingId = null;
+    stack = [];
+    show('login', true);
+    toast('Signed out');
+  }
+  $('#btnOrgOut').innerHTML = ic('logout');
+  $('#btnAdmOut').innerHTML = ic('logout');
+  $('#btnOrgOut').addEventListener('click', signOut);
+  $('#btnAdmOut').addEventListener('click', signOut);
+
+  /* ----- student sign in (returning students, on any device) ----- */
+  function prepareSignin(email){
+    $('#inf-email').value = email || '';
+    $('#inf-password').value = '';
+    $('#inf-password').type = 'password';
+    $('#inEye').innerHTML = ic('eye');
+    fbad('in', 'password', '');
+  }
+  $('#inEye').innerHTML = ic('eye');
+  $('#inEye').addEventListener('click', function(){
+    var inp = $('#inf-password'), showIt = inp.type === 'password';
+    inp.type = showIt ? 'text' : 'password';
+    this.innerHTML = ic(showIt ? 'eyeoff' : 'eye');
+    this.setAttribute('aria-label', showIt ? 'Hide password' : 'Show password');
+  });
+  function studentSignin(){
+    var pw = val('inf-password');
+    if(!applyChecks('in', [['password', pw ? '' : 'Enter your password']])) return;
+    whenSynced(function(){
+      loadDB();
+      var stu = findStudent(val('inf-email'));
+      if(!stu){ fbad('in', 'password', 'No account found for this email'); return; }
+      if(!pwMatches(stu, pw)){ fbad('in', 'password', 'The password is incorrect'); return; }
+      if(!stu.pwh){ setPw(stu, pw); saveDB(); }
+      state.name = stu.name; state.role = 'student';
+      state.profile = {name:stu.name, email:stu.email, phone:stu.phone, college:stu.college, course:stu.course, year:stu.year, regno:stu.regno};
+      renderHome();
+      toast('Signed in');
+      go('home');
+      var at = stack.lastIndexOf('signin');
+      if(at > -1) stack.splice(at, 1);
+    });
+  }
+  $('#inSubmit').addEventListener('click', studentSignin);
+  $$('#s-signin input').forEach(function(i){ i.addEventListener('keydown', function(e){ if(e.key === 'Enter') studentSignin(); }); });
+
+  /* ----- forgot password (every sign-in section) ----- */
+  var GMAIL_RE = /^[^\s@]+@gmail\.com$/i;
+  var fpSheet = $('#fpSheet');
+  function openForgot(){
+    ['name', 'email', 'password', 'confirm'].forEach(function(k){ $('#fpf-' + k).value = ''; fbad('fp', k, ''); });
+    var pw = $('#fpf-password');
+    pw.type = 'password';
+    $('#fpEye').innerHTML = ic('eye');
+    fpSheet.classList.add('open');
+    setTimeout(function(){ $('#fpf-name').focus(); }, 60);
+  }
+  function closeForgot(){ fpSheet.classList.remove('open'); }
+  $$('[data-forgot]').forEach(function(b){ b.addEventListener('click', openForgot); });
+  $('#fpCancel').addEventListener('click', closeForgot);
+  fpSheet.addEventListener('click', function(e){ if(e.target === fpSheet) closeForgot(); });
+  $('#fpEye').innerHTML = ic('eye');
+  $('#fpEye').addEventListener('click', function(){
+    var inp = $('#fpf-password'), showIt = inp.type === 'password';
+    inp.type = showIt ? 'text' : 'password';
+    this.innerHTML = ic(showIt ? 'eyeoff' : 'eye');
+    this.setAttribute('aria-label', showIt ? 'Hide password' : 'Show password');
+  });
+  function resetPassword(){
+    var name = val('fpf-name').trim(), email = val('fpf-email').trim();
+    var pw = val('fpf-password'), cf = val('fpf-confirm');
+    var checks = [
+      ['name', name.length >= 2 ? '' : 'Enter your full name'],
+      ['email', GMAIL_RE.test(email) ? '' : 'Enter a valid Gmail address ending in @gmail.com'],
+      ['password', pw.length >= 6 ? '' : 'Use at least 6 characters'],
+      ['confirm', cf && cf === pw ? '' : 'Passwords do not match']
+    ];
+    if(!applyChecks('fp', checks)) return;
+    loadDB();
+    var acct = null;
+    db.organizers.forEach(function(o){ if(o.email.toLowerCase() === email.toLowerCase()) acct = o; });
+    if(acct){ acct.name = name; setPw(acct, pw); saveDB(); }
+    var stu = findStudent(email);
+    if(stu){ setPw(stu, pw); saveDB(); }
+    closeForgot();
+    toast('Password reset for ' + email + '. Sign in with your new password.');
+  }
+  $('#fpConfirm').addEventListener('click', resetPassword);
+  $$('#fpSheet input').forEach(function(i){ i.addEventListener('keydown', function(e){ if(e.key === 'Enter') resetPassword(); }); });
+
+  /* ----- event cards (used by all three roles) ----- */
+  function evCard(ev, mode){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'evc';
+    var chips = '', meta = '';
+    if(mode === 'student'){
+      if(myReg(ev)) chips += '<span class="chip ok">Registered</span>';
+      else if(isClosed(ev)) chips += '<span class="chip bad">Registration closed</span>';
+      chips += '<span class="chip">' + esc(fmtFee(ev.fee)) + '</span>';
+    } else {
+      chips += statusChip(ev);
+      if(ev.status === 'live') chips += '<span class="chip">' + regCount(ev) + ' registered</span>';
+      chips += '<span class="chip">' + esc(fmtFee(ev.fee)) + '</span>';
+    }
+    meta = '<span class="meta"><span>' + ic('calendar') + esc(fmtDate(ev.date)) + '</span><span>' + ic('pin') + esc(ev.venue) + '</span></span>';
+    if(mode === 'student') meta += '<span class="meta"><span>' + ic('clock') + 'Register by ' + esc(fmtDate(ev.deadline)) + '</span><span>' + ic('megaphone') + esc(ev.club) + '</span></span>';
+    if(mode === 'admin') meta += '<span class="meta"><span>' + ic('megaphone') + esc(ev.club) + '</span><span>' + ic('clock') + 'Sent ' + esc(agoL(ev.submittedAt)) + '</span></span>';
+    b.innerHTML = '<span class="chips">' + chips + '</span><b>' + esc(ev.title) + '</b>' + meta;
+    b.addEventListener('click', function(){ openEvent(ev.id); });
+    return b;
+  }
+
+  /* ----- organizer home ----- */
+  function renderOrg(){
+    if(!state.org) return;
+    loadDB();
+    var list = db.events.filter(function(e){ return e.orgId === state.org.id; })
+      .sort(function(a, b){ return b.submittedAt - a.submittedAt; });
+    var pend = list.filter(function(e){ return e.status === 'pending'; }).length;
+    var live = list.filter(function(e){ return e.status === 'live'; }).length;
+    $('#orgHello').textContent = state.org.name.split(/\s+/)[0];
+    $('#orgStats').innerHTML = statHTML([[list.length, 'Events sent'], [pend, 'Waiting for approval'], [live, 'Live events'], [totalRegs(list), 'Total registrations']]);
+    $('#orgCount').textContent = list.length ? list.length + (list.length === 1 ? ' event' : ' events') : '';
+    var box = $('#orgList'); box.innerHTML = '';
+    if(!list.length){
+      box.innerHTML = emptyHTML('megaphone', 'No events yet', 'Create your first event. The admin reviews it before students can see it.');
+      return;
+    }
+    list.forEach(function(ev){ box.appendChild(evCard(ev, 'organizer')); });
+  }
+  $('#orgColOpen').addEventListener('click', function(){ openColleges(); });
+  $('#admColOpen').addEventListener('click', function(){ openColleges(); });
+  $('#admColAdd').addEventListener('click', function(){ openAddCollege(null); });
+  $('#btnNewEvent').innerHTML = ic('plus') + 'Create new event';
+  $('#btnNewEvent').addEventListener('click', function(){ openCreate(null); });
+
+  /* ----- admin home ----- */
+  function renderAdmin(){
+    loadDB();
+    function by(s){ return db.events.filter(function(e){ return e.status === s; }); }
+    var pend = by('pending'), live = by('live'), rej = by('rejected');
+    $('#admColCount').textContent = ensureColleges().length + (ensureColleges().length === 1 ? ' college listed' : ' colleges listed');
+    $('#admStats').innerHTML = statHTML([[pend.length, 'Waiting for review'], [live.length, 'Live events'], [rej.length, 'Rejected'], [totalRegs(db.events), 'Total registrations']]);
+    var tabs = [['pending', 'Pending', pend.length], ['live', 'Live', live.length], ['rejected', 'Rejected', rej.length]];
+    $('#admTabs').innerHTML = tabs.map(function(t){
+      return '<button type="button" data-tab="' + t[0] + '" aria-pressed="' + (admTab === t[0]) + '">' + t[1] + '<span class="n">' + t[2] + '</span></button>';
+    }).join('');
+    $$('#admTabs button').forEach(function(b){
+      b.addEventListener('click', function(){ admTab = b.getAttribute('data-tab'); renderAdmin(); });
+    });
+    var list = by(admTab);
+    if(admTab === 'pending') list.sort(function(a, b){ return a.submittedAt - b.submittedAt; });
+    else if(admTab === 'live') list.sort(function(a, b){ return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; });
+    else list.sort(function(a, b){ return b.decidedAt - a.decidedAt; });
+    var box = $('#admList'); box.innerHTML = '';
+    if(!list.length){
+      var msg = {
+        pending:['check', 'Nothing to review', 'Events sent by organizers will show up here.'],
+        live:['zap', 'No live events', 'Events you approve will be live for students.'],
+        rejected:['x', 'No rejected events', 'Events you reject, with your reason, will be listed here.']
+      }[admTab];
+      box.innerHTML = emptyHTML(msg[0], msg[1], msg[2]);
+      return;
+    }
+    list.forEach(function(ev){ box.appendChild(evCard(ev, 'admin')); });
+  }
+
+  /* ----- create / edit event (organizer) ----- */
+  function feeUI(){ $('#ew-fee').hidden = val('ef-feetype') !== 'paid'; }
+  $('#ef-feetype').addEventListener('change', feeUI);
+  function openCreate(id){
+    loadDB();
+    var ev = id ? findEvent(id) : null;
+    editingId = ev ? ev.id : null;
+    $('#crTitle').textContent = ev ? 'Edit event' : 'Create event';
+    $('#crIntro').textContent = ev ? 'Change the details using the admin\u2019s feedback, then send it again.'
+      : 'Fill in the details. The admin reviews every event before students can see it.';
+    $('#crSubmit').textContent = ev ? 'Resubmit for approval' : 'Send to admin for approval';
+    $('#crFeedback').hidden = !(ev && ev.reason);
+    $('#crReason').textContent = ev ? ev.reason : '';
+    $('#ef-title').value = ev ? ev.title : '';
+    $('#ef-desc').value = ev ? ev.desc : '';
+    $('#ef-date').value = ev ? ev.date : '';
+    $('#ef-time').value = ev && ev.time ? ev.time : '';
+    $('#ef-deadline').value = ev ? ev.deadline : '';
+    $('#ef-venue').value = ev ? ev.venue : '';
+    var clgInput = $('#ef-clg');
+    clgInput.value = ev && ev.collegeName ? ev.collegeName : '';
+    clgInput.dataset.collegeId = ev && ev.collegeId ? ev.collegeId : '';
+    $('#ef-clg-box').hidden = true; $('#ef-clg-box').innerHTML = '';
+    $('#ef-feetype').value = ev && ev.fee > 0 ? 'paid' : 'free';
+    $('#ef-fee').value = ev && ev.fee > 0 ? ev.fee : '';
+    $('#ef-date').min = $('#ef-deadline').min = todayStr();
+    feeUI();
+    ['title', 'desc', 'date', 'time', 'deadline', 'venue', 'clg', 'feetype', 'fee'].forEach(function(k){ fbad('e', k, ''); });
+    go('create');
+  }
+  $('#ef-date').addEventListener('change', function(){ $('#ef-deadline').max = val('ef-date') || ''; });
+  function submitEvent(){
+    var title = val('ef-title').trim(), desc = val('ef-desc').trim(), date = val('ef-date'), dl = val('ef-deadline');
+    var time = val('ef-time'), venue = val('ef-venue').trim(), paid = val('ef-feetype') === 'paid', feeRaw = val('ef-fee').trim(), t = todayStr();
+    var checks = [
+      ['title', title.length >= 3 ? '' : 'Enter the event name'],
+      ['date', !date ? 'Choose the event date' : date < t ? 'Choose today or a later date' : ''],
+      ['deadline', !dl ? 'Choose the registration deadline' : dl < t ? 'The deadline cannot be in the past' : (date && dl > date ? 'The deadline must be on or before the event date' : '')],
+      ['venue', venue.length >= 2 ? '' : 'Enter the venue'],
+      ['fee', paid && !(/^\d+$/.test(feeRaw) && +feeRaw >= 1) ? 'Enter the fee in rupees' : '']
+    ];
+    if(!applyChecks('e', checks)){ toast('Fix the highlighted fields'); return; }
+    loadDB();
+    var ev, now = Date.now(), resub = !!editingId;
+    if(resub){
+      ev = findEvent(editingId);
+      if(!ev || !state.org || ev.orgId !== state.org.id){ toast('Could not find this event'); return; }
+    } else {
+      ev = {id:uid(), orgId:state.org.id, orgName:state.org.name, orgEmail:state.org.email, club:state.org.club, regs:[]};
+      db.events.push(ev);
+    }
+    var clgName = val('ef-clg').trim(), clgId = $('#ef-clg').dataset.collegeId || '';
+    var cobj = clgId ? collegeById(clgId) : null;
+    if(cobj && cobj.name !== clgName) cobj = null;
+    if(!cobj && clgName){
+      cobj = ensureColleges().filter(function(c){ return c.name.toLowerCase() === clgName.toLowerCase(); })[0] || null;
+    }
+    ev.collegeId = cobj ? cobj.id : '';
+    ev.collegeName = clgName;
+    ev.title = title; ev.desc = desc; ev.date = date; ev.time = time; ev.deadline = dl; ev.venue = venue;
+    ev.fee = paid ? parseInt(feeRaw, 10) : 0;
+    ev.status = 'pending'; ev.reason = ''; ev.submittedAt = now; ev.decidedAt = null;
+    saveDB();
+    editingId = null;
+    toast(resub ? 'Resubmitted to the admin' : 'Sent to the admin for approval');
+    refreshViews();
+    goBack();
+  }
+  $('#crSubmit').addEventListener('click', submitEvent);
+
+  /* ----- student: events list ----- */
+  function renderStudentEvents(){
+    loadDB();
+    var list = db.events.filter(function(e){ return e.status === 'live' && !isEnded(e); })
+      .sort(function(a, b){ return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; });
+    var box = $('#evList'); box.innerHTML = '';
+    if(!list.length){
+      box.innerHTML = emptyHTML('zap', 'No events right now', 'New events show up here as soon as the admin approves them.');
+      renderTickets();
+      return;
+    }
+    list.forEach(function(ev){ box.appendChild(evCard(ev, 'student')); });
+    renderTickets();
+  }
+  function openStudentEvents(){ renderStudentEvents(); go('events'); }
+
+  /* ----- event details (all roles) ----- */
+  function factRow(icon, label, value){
+    return '<div class="fact"><span class="ico">' + ic(icon) + '</span><div><small>' + esc(label) + '</small><strong>' + esc(value) + '</strong></div></div>';
+  }
+  function regRow(r){
+    return '<div class="reg"><span class="av">' + esc((r.name || '?').charAt(0).toUpperCase()) + '</span><div>' +
+      '<b>' + esc(r.name) + '</b>' +
+      '<span>' + esc(r.college) + ' \u00B7 ' + esc(r.dept || (r.course + (r.year ? ', ' + r.year : ''))) + '</span>' +
+      '<span>ID / roll no. ' + esc(r.regno) + (r.idcard ? ' \u00B7 ID card: ' + esc(r.idcard) : '') + '</span>' +
+      '<span>' + esc(r.phone) + ' \u00B7 ' + esc(r.email) + '</span>' +
+      (r.teamType ? '<span>' + esc(r.teamType === 'Team' ? 'Team: ' + r.teamName : 'Individual') + (r.food ? ' \u00B7 ' + esc(r.food) : '') + '</span>' : '') +
+      (r.members ? '<span>Members: ' + esc(r.members.replace(/\n/g, '; ')) + '</span>' : '') +
+      (r.txn ? '<span>Payment: ' + esc(r.txn) + (r.shot ? ' \u00B7 ' + esc(r.shot) : '') + '</span>' : '') +
+      (r.ticket ? '<span>Ticket ' + esc(r.ticket) + '</span>' : '') +
+      '<span>Registered ' + esc(agoL(r.at)) + '</span></div></div>';
+  }
+  function openEvent(id){ curEventId = id; renderEvent(); go('event'); }
+  function renderEvent(){
+    loadDB();
+    var ev = findEvent(curEventId), body = $('#evBody'), foot = $('#evFooter'), role = state.role;
+    if(!ev){ body.innerHTML = emptyHTML('calendar', 'Event not found', 'It may have been removed.'); foot.hidden = true; return; }
+    var chips = '', h = '', f = '';
+    if(role === 'student'){
+      if(myReg(ev)) chips += '<span class="chip ok">Registered</span>';
+      else if(isClosed(ev)) chips += '<span class="chip bad">Registration closed</span>';
+    } else chips += statusChip(ev);
+    chips += '<span class="chip">' + esc(ev.fee > 0 ? 'Fee ' + fmtFee(ev.fee) : 'Free') + '</span>';
+    h += '<div class="chips">' + chips + '</div><h1 style="margin-top:12px;word-break:break-word">' + esc(ev.title) + '</h1>';
+    h += '<p class="muted" style="margin-top:6px">Hosted by ' + esc(ev.club) + '</p>';
+    h += '<div class="facts">' + factRow('calendar', 'Event date', fmtDate(ev.date)) + factRow('clock', 'Register before', fmtDate(ev.deadline)) +
+         factRow('clock', 'Event time', eventTime(ev)) + (ev.collegeName ? factRow('cap', 'College', ev.collegeName) : '') + factRow('pin', 'Venue', ev.venue) + factRow('rupee', 'Fee', ev.fee > 0 ? fmtFee(ev.fee) : 'Free');
+    if(role === 'admin') h += factRow('user', 'Sent by', ev.orgName + ' (' + ev.orgEmail + ')');
+    h += '</div>';
+    if(ev.desc) h += '<div class="callout"><h3>About this event</h3><p>' + esc(ev.desc) + '</p></div>';
+
+    if(role === 'student'){
+      if(myReg(ev)) f = '<button class="btn btn-primary" id="evTicket">' + ic('check') + 'View your ticket</button>';
+      else if(isClosed(ev)) f = '<button class="btn btn-surface" disabled>Registration closed</button>';
+      else f = '<button class="btn btn-primary" id="evRegBtn">Register now' + (ev.fee > 0 ? ' \u00B7 ' + esc(fmtFee(ev.fee)) : '') + '</button>';
+    } else if(role === 'organizer'){
+      if(ev.status === 'pending') h += '<div class="callout"><h3>Waiting for admin review</h3><p>Students cannot see this event yet. The admin\u2019s decision will show up here and in your notifications.</p></div>';
+      if(ev.status === 'rejected'){
+        h += '<div class="callout bad"><h3>Rejected by the admin</h3><p>' + esc(ev.reason) + '</p></div>';
+        f = '<button class="btn btn-primary" id="evEdit">Edit and resubmit</button>';
+      }
+      if(ev.status === 'live'){
+        var regs = (ev.regs || []).slice().sort(function(a, b){ return b.at - a.at; });
+        h += '<div class="callout ok"><h3>Approved and live</h3><p>Students can see this event and register until ' + esc(fmtDate(ev.deadline)) + '.</p></div>';
+        h += '<div class="sec"><div class="sec-head"><h2>Participants</h2><span>' + regs.length + ' registered</span></div><div class="list">' +
+             (regs.length ? regs.map(regRow).join('') : emptyHTML('users', 'No registrations yet', 'Students who register will appear here with their details.')) + '</div></div>';
+      }
+    } else if(role === 'admin'){
+      if(ev.status === 'live') h += '<div class="sec"><div class="stats one"><div class="stat"><b>' + regCount(ev) + '</b><span>Students registered</span></div></div></div>';
+      if(ev.status === 'rejected') h += '<div class="callout bad"><h3>You rejected this event</h3><p>' + esc(ev.reason) + '</p></div>';
+      if(ev.status === 'pending') f = '<div class="duo"><button class="btn btn-danger" id="evReject">Reject</button><button class="btn btn-good" id="evApprove">Approve</button></div>';
+    }
+    h += eventReviewsHTML(ev, role);
+    body.innerHTML = h;
+    foot.innerHTML = f;
+    foot.hidden = !f;
+    var b;
+    if((b = $('#evReview'))) b.addEventListener('click', function(){ openReview('event', ev.id, ev.title); });
+    if((b = $('#evRegBtn'))) b.addEventListener('click', openRegSheet);
+    if((b = $('#evTicket'))) b.addEventListener('click', function(){ openTicket(curEventId); });
+    if((b = $('#evEdit'))) b.addEventListener('click', function(){ openCreate(curEventId); });
+    if((b = $('#evApprove'))) b.addEventListener('click', approveEvent);
+    if((b = $('#evReject'))) b.addEventListener('click', openRejectSheet);
+  }
+
+  /* ----- admin decision ----- */
+  function approveEvent(){
+    loadDB();
+    var ev = findEvent(curEventId);
+    if(!ev || ev.status !== 'pending') return;
+    ev.status = 'live'; ev.reason = ''; ev.decidedAt = Date.now();
+    saveDB();
+    toast('Event approved. Students can see it now.');
+    refreshViews();
+    goBack();
+  }
+  var rejSheet = $('#rejSheet');
+  function openRejectSheet(){
+    $('#rejReason').value = '';
+    $('#rejField').classList.remove('bad');
+    rejSheet.classList.add('open');
+    setTimeout(function(){ $('#rejReason').focus(); }, 60);
+  }
+  function closeRejectSheet(){ rejSheet.classList.remove('open'); }
+  $('#rejCancel').addEventListener('click', closeRejectSheet);
+  rejSheet.addEventListener('click', function(e){ if(e.target === rejSheet) closeRejectSheet(); });
+  $('#rejReason').addEventListener('input', function(){ $('#rejField').classList.remove('bad'); });
+  $('#rejConfirm').addEventListener('click', function(){
+    var reason = val('rejReason').trim();
+    if(reason.length < 3){ $('#rejField').classList.add('bad'); $('#rejReason').focus(); return; }
+    loadDB();
+    var ev = findEvent(curEventId);
+    if(!ev || ev.status !== 'pending'){ closeRejectSheet(); return; }
+    ev.status = 'rejected'; ev.reason = reason; ev.decidedAt = Date.now();
+    saveDB();
+    closeRejectSheet();
+    toast('Event rejected. Your reason was sent to the organizer.');
+    refreshViews();
+    goBack();
+  });
+
+  /* ----- student registration: Google-form style ----- */
+  function teamUI(){
+    var team = val('gf-teamtype') === 'Team';
+    $('#gw-teamname').hidden = !team;
+    $('#gw-members').hidden = !team;
+  }
+  $('#gf-teamtype').addEventListener('change', teamUI);
+
+  /* dummy QR code: a QR-looking pattern built from the event id, not a real payment code */
+  function drawQR(canvas, seedText, dark){
+    var ctx = canvas.getContext('2d'), N = 25, S = canvas.width / N;
+    var seed = 0, i, j;
+    for(i = 0; i < seedText.length; i++) seed = (seed * 31 + seedText.charCodeAt(i)) >>> 0;
+    function rnd(){ seed = (seed * 1103515245 + 12345) >>> 0; return seed / 4294967296; }
+    ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = dark || '#101828';
+    function finder(cx, cy){
+      ctx.fillRect(cx * S, cy * S, 7 * S, 7 * S);
+      ctx.fillStyle = '#FFFFFF'; ctx.fillRect((cx + 1) * S, (cy + 1) * S, 5 * S, 5 * S);
+      ctx.fillStyle = dark || '#101828'; ctx.fillRect((cx + 2) * S, (cy + 2) * S, 3 * S, 3 * S);
+    }
+    for(i = 0; i < N; i++) for(j = 0; j < N; j++){
+      var inFinder = (i < 8 && j < 8) || (i > N - 9 && j < 8) || (i < 8 && j > N - 9);
+      if(inFinder) continue;
+      if(rnd() > 0.52) ctx.fillRect(i * S, j * S, S, S);
+    }
+    finder(0, 0); finder(N - 7, 0); finder(0, N - 7);
+    ctx.fillStyle = dark || '#101828';
+    for(i = 8; i < N - 8; i++){ if(i % 2 === 0){ ctx.fillRect(i * S, 6 * S, S, S); ctx.fillRect(6 * S, i * S, S, S); } }
+  }
+
+  function openRegSheet(){
+    loadDB();
+    var ev = findEvent(curEventId), p = state.profile;
+    if(!ev || !p) return;
+    if(ev.status !== 'live'){ toast('This event is not open for registration'); return; }
+    if(isClosed(ev)){ toast('Registration for this event is closed'); refreshViews(); return; }
+    if(myReg(ev)){ toast('You are already registered'); return; }
+    $('#gfHead').textContent = ev.title;
+    $('#gfSub').textContent = 'Hosted by ' + ev.club + ' \u00B7 ' + fmtDate(ev.date) + ' \u00B7 ' + ev.venue +
+      '. Fill in every field marked with a star.';
+    $('#gf-name').value = p.name || '';
+    $('#gf-email').value = p.email || '';
+    $('#gf-phone').value = p.phone || '';
+    $('#gf-college').value = p.college || '';
+    $('#gf-dept').value = (p.course ? p.course + ', ' : '') + (p.year || '');
+    $('#gf-roll').value = p.regno || '';
+    $('#gf-idcard').value = '';
+    $('#gf-teamtype').value = 'Individual';
+    $('#gf-teamname').value = '';
+    $('#gf-members').value = '';
+    $('#gf-food').value = '';
+    $('#gf-txn').value = '';
+    $('#gf-shot').value = '';
+    $('#gf-consent').checked = false;
+    teamUI();
+    var paid = ev.fee > 0;
+    $('#gfPaySec').hidden = !paid;
+    if(paid){
+      $('#gfAmount').textContent = 'Pay ' + fmtFee(ev.fee);
+      $('#gfPayNote').textContent = 'Scan this QR code to pay the registration fee, then enter the transaction ID and upload the screenshot below. This is a demo QR code for the prototype.';
+      drawQR($('#gfQR'), ev.id + '|' + ev.fee);
+    }
+    ['name','email','phone','college','dept','roll','idcard','teamtype','teamname','members','food','txn','shot','consent'].forEach(function(k){ fbad('g', k, ''); });
+    go('form');
+  }
+
+  function submitForm(){
+    loadDB();
+    var ev = findEvent(curEventId);
+    if(!ev || !state.profile){ toast('This event is not open for registration'); return; }
+    var team = val('gf-teamtype') === 'Team', paid = ev.fee > 0;
+    var name = val('gf-name').trim(), email = val('gf-email').trim(), phone = val('gf-phone').trim();
+    var college = val('gf-college').trim(), dept = val('gf-dept').trim(), roll = val('gf-roll').trim();
+    var teamName = val('gf-teamname').trim(), members = val('gf-members').trim();
+    var food = val('gf-food'), txn = val('gf-txn').trim();
+    var idFile = $('#gf-idcard').files[0], shotFile = $('#gf-shot').files[0];
+    var checks = [
+      ['name', name ? '' : 'Enter your full name'],
+      ['email', email ? '' : 'Enter your email address'],
+      ['phone', phone ? '' : 'Enter your phone or WhatsApp number'],
+      ['college', college ? '' : 'Enter your college name'],
+      ['dept', dept ? '' : 'Enter your department and year of study'],
+      ['roll', roll ? '' : 'Enter your college ID or roll number'],
+      ['teamname', team && !teamName ? 'Enter your team name' : ''],
+      ['members', team && !members ? "Enter your team members' details" : ''],
+      ['food', food ? '' : 'Choose Veg or Non-Veg'],
+      ['txn', paid && !txn ? 'Enter the transaction ID' : ''],
+      ['shot', paid && !shotFile ? 'Upload the payment screenshot' : ''],
+      ['consent', $('#gf-consent').checked ? '' : 'Tick the box to accept the rules and code of conduct']
+    ];
+    if(!applyChecks('g', checks)){ toast('Fill in every required field'); return; }
+    if(ev.status !== 'live' || isClosed(ev)){ toast('Registration for this event is closed'); refreshViews(); goBack(); return; }
+    if(myReg(ev)){ toast('You are already registered'); goBack(); return; }
+    var reg = {
+      name:name, email:email, phone:phone, college:college,
+      course:dept, year:'', regno:roll,
+      dept:dept, idcard:idFile ? idFile.name : '',
+      teamType:team ? 'Team' : 'Individual', teamName:team ? teamName : '', members:team ? members : '',
+      food:food, txn:paid ? txn : '', shot:paid && shotFile ? shotFile.name : '',
+      consent:true, acct:state.profile.email, ticket:'CLG-' + ev.id.slice(-4).toUpperCase() + '-' + Math.random().toString(36).slice(2, 6).toUpperCase(),
+      at:Date.now()
+    };
+    ev.regs.push(reg);
+    saveDB();
+    toast('Registered. Your ticket is ready.');
+    refreshViews();
+    openTicket(ev.id, true);
+  }
+  $('#gfSubmit').addEventListener('click', submitForm);
+
+  /* ----- ticket (students only) ----- */
+  function eventTime(ev){
+    if(!ev.time) return '9:00 AM onwards';
+    var p = String(ev.time).split(':'), h = parseInt(p[0], 10), m = p[1] || '00';
+    var ap = h >= 12 ? 'PM' : 'AM', h12 = h % 12 === 0 ? 12 : h % 12;
+    return h12 + ':' + m + ' ' + ap;
+  }
+  function drawTicket(canvas, ev, r){
+    var ctx = canvas.getContext('2d'), W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+    var g = ctx.createLinearGradient(0, 0, W, H);
+    g.addColorStop(0, '#141A2E'); g.addColorStop(1, '#2A1B32');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = '#FF5533'; ctx.fillRect(0, 0, W, 12);
+    var sx = W - 300;
+    ctx.fillStyle = 'rgba(255,255,255,.06)'; ctx.fillRect(sx, 12, W - sx, H - 12);
+    ctx.strokeStyle = 'rgba(255,255,255,.28)'; ctx.lineWidth = 3; ctx.setLineDash([12, 12]);
+    ctx.beginPath(); ctx.moveTo(sx, 30); ctx.lineTo(sx, H - 30); ctx.stroke(); ctx.setLineDash([]);
+    function txt(s, x, y, size, weight, color, max){
+      ctx.fillStyle = color; ctx.font = weight + ' ' + size + 'px Figtree, Manrope, Arial, sans-serif';
+      var t = String(s == null ? '' : s);
+      if(max){ while(ctx.measureText(t).width > max && t.length > 4) t = t.slice(0, -2); if(t !== String(s)) t += '\u2026'; }
+      ctx.fillText(t, x, y);
+    }
+    txt('COLLEGO', 48, 76, 30, '800', '#FF7A5C');
+    txt('EVENT TICKET', 48, 108, 18, '700', 'rgba(255,255,255,.55)');
+    txt(ev.title, 48, 168, 42, '800', '#FFFFFF', sx - 100);
+    txt('Hosted by ' + ev.club, 48, 206, 20, '600', 'rgba(255,255,255,.7)', sx - 100);
+    var cols = [
+      ['ATTENDEE', r.name], ['DATE', fmtDate(ev.date)],
+      ['VENUE', ev.venue], ['TIME', eventTime(ev)],
+      ['COLLEGE', r.college], ['DEPARTMENT AND YEAR', r.dept || r.course],
+      ['ID / ROLL NUMBER', r.regno], ['TEAM', r.teamType === 'Team' ? r.teamName : 'Individual'],
+      ['FOOD PREFERENCE', r.food], [r.txn ? 'PAYMENT' : 'ENTRY', r.txn ? fmtFee(ev.fee) + ' \u00B7 ' + r.txn : 'Free entry']
+    ];
+    var x0 = 48, y0 = 266, colW = (sx - 96) / 2;
+    cols.forEach(function(c, i){
+      var x = x0 + (i % 2) * colW, y = y0 + Math.floor(i / 2) * 58;
+      txt(c[0], x, y, 14, '700', 'rgba(255,255,255,.45)');
+      txt(c[1] || '\u2014', x, y + 26, 21, '700', '#FFFFFF', colW - 24);
+    });
+    var qs = 190, qx = sx + ((W - sx) - qs) / 2;
+    var q = document.createElement('canvas'); q.width = q.height = qs;
+    drawQR(q, r.ticket + ev.id);
+    ctx.drawImage(q, qx, 90);
+    ctx.textAlign = 'center';
+    txt('TICKET ID', W - 150, 320, 14, '700', 'rgba(255,255,255,.45)');
+    txt(r.ticket, W - 150, 348, 22, '800', '#FFFFFF', 260);
+    txt('Show this at the entry gate', W - 150, 400, 15, '600', 'rgba(255,255,255,.6)', 260);
+    txt('Registered ' + fmtDay(r.at, true), W - 150, 430, 14, '600', 'rgba(255,255,255,.45)', 260);
+    ctx.textAlign = 'left';
+  }
+  var tkEventId = null;
+  function openTicket(id, replace){
+    loadDB();
+    var ev = findEvent(id), r = ev ? myReg(ev) : null;
+    if(!ev || !r || state.role !== 'student'){ toast('Ticket not found'); return; }
+    if(!r.ticket){
+      r.ticket = 'CLG-' + ev.id.slice(-4).toUpperCase() + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
+      saveDB();
+    }
+    tkEventId = id;
+    $('#tkHead').textContent = 'Ticket for ' + ev.title;
+    $('#tkSub').textContent = r.name + ' \u00B7 ' + fmtDate(ev.date) + ' \u00B7 ' + eventTime(ev) + ' \u00B7 ' + ev.venue;
+    drawTicket($('#tkCanvas'), ev, r);
+    if(replace) show('ticket', false); else go('ticket');
+  }
+  $('#tkDownload').addEventListener('click', function(){
+    var ev = findEvent(tkEventId), r = ev ? myReg(ev) : null;
+    if(!ev || !r) return;
+    try{
+      var a = document.createElement('a');
+      a.download = 'collego-ticket-' + r.ticket + '.png';
+      a.href = $('#tkCanvas').toDataURL('image/png');
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      toast('Ticket downloaded');
+    }catch(e){ toast('Could not download the ticket'); }
+  });
+  function renderTickets(){
+    loadDB();
+    var sec = $('#tkSec'), box = $('#tkList');
+    var mine = db.events.filter(function(e){ return e.status === 'live' && myReg(e); })
+      .sort(function(a, b){ return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; });
+    sec.hidden = !mine.length || state.role !== 'student';
+    $('#tkCount').textContent = mine.length ? mine.length + (mine.length === 1 ? ' ticket' : ' tickets') : '';
+    box.innerHTML = '';
+    mine.forEach(function(ev){
+      var r = myReg(ev);
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'evc';
+      b.innerHTML = '<span class="chips"><span class="chip ok">Ticket ready</span><span class="chip">' + esc(r.ticket || 'Ticket ready') + '</span></span>' +
+        '<b>' + esc(ev.title) + '</b>' +
+        '<span class="meta"><span>' + ic('calendar') + esc(fmtDate(ev.date)) + '</span><span>' + ic('clock') + esc(eventTime(ev)) + '</span><span>' + ic('pin') + esc(ev.venue) + '</span></span>';
+      b.addEventListener('click', function(){ openTicket(ev.id); });
+      box.appendChild(b);
+    });
+  }
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape'){ closeRejectSheet(); closeForgot(); }
+  });
+
+  /* =====================================================================
+     COLLEGES: added by the admin, searched by everyone,
+     reviewed and commented on by students.
+     ===================================================================== */
+  function seedColleges(){
+    var t = Date.now();
+    return [
+      {id:'clg-cet', name:'College of Engineering Trivandrum', place:'Thiruvananthapuram, Kerala',
+       univ:'APJ Abdul Kalam Technological University (KTU)', type:'Government',
+       courses:'B.Tech, M.Tech, MCA, Ph.D', website:'www.cet.ac.in',
+       about:'One of the oldest engineering colleges in Kerala, with a large campus in the city and active technical clubs. The college regularly conducts technical festivals, hackathons and workshops that are open to students from other colleges.',
+       addedAt:t, reviews:[]},
+      {id:'clg-gect', name:'Government Engineering College Thrissur', place:'Thrissur, Kerala',
+       univ:'APJ Abdul Kalam Technological University (KTU)', type:'Government',
+       courses:'B.Tech, M.Tech', website:'www.gectcr.ac.in',
+       about:'A government engineering college in Thrissur with departments across the main engineering branches. Its clubs run coding contests, cultural nights and inter-college technical events through the year.',
+       addedAt:t - 1, reviews:[]},
+      {id:'clg-rset', name:'Rajagiri School of Engineering and Technology', place:'Kakkanad, Ernakulam, Kerala',
+       univ:'APJ Abdul Kalam Technological University (KTU)', type:'Self financing',
+       courses:'B.Tech, M.Tech, MCA, MBA', website:'www.rajagiritech.ac.in',
+       about:'A self financing engineering college near Kochi, known for its placement activity and student chapters. It hosts hackathons, management fests and workshops that welcome participants from across Kerala.',
+       addedAt:t - 2, reviews:[]}
+    ];
+  }
+  /* A broader name+place directory used only to power the "search for a college"
+     suggestions when an organizer is creating an event. This lets an organizer
+     find and pick a college that the admin hasn't added to the app yet \u2014
+     picking one here does not add it to the admin's college list. */
+  var KNOWN_COLLEGE_DIRECTORY = [
+    {name:'College of Engineering Trivandrum', place:'Thiruvananthapuram, Kerala'},
+    {name:'Government Engineering College Thrissur', place:'Thrissur, Kerala'},
+    {name:'Rajagiri School of Engineering and Technology', place:'Kakkanad, Ernakulam, Kerala'},
+    {name:'College of Engineering Kidangoor', place:'Kottayam, Kerala'},
+    {name:'Government Engineering College Barton Hill', place:'Thiruvananthapuram, Kerala'},
+    {name:'TKM College of Engineering', place:'Kollam, Kerala'},
+    {name:'Model Engineering College', place:'Kochi, Kerala'},
+    {name:'Mar Athanasius College of Engineering', place:'Kothamangalam, Kerala'},
+    {name:'Government Engineering College Kannur', place:'Kannur, Kerala'},
+    {name:'Government Engineering College Idukki', place:'Idukki, Kerala'},
+    {name:'Government College of Engineering Kannur (GECK)', place:'Kannur, Kerala'},
+    {name:'Amrita School of Engineering, Amritapuri', place:'Kollam, Kerala'},
+    {name:'Amrita Vishwa Vidyapeetham, Coimbatore', place:'Coimbatore, Tamil Nadu'},
+    {name:'Muthoot Institute of Technology and Science', place:'Kochi, Kerala'},
+    {name:'Sree Chitra Thirunal College of Engineering', place:'Thiruvananthapuram, Kerala'},
+    {name:'LBS Institute of Technology for Women', place:'Thiruvananthapuram, Kerala'},
+    {name:'Vidya Academy of Science and Technology', place:'Thrissur, Kerala'},
+    {name:'Sahrdaya College of Engineering and Technology', place:'Kodakara, Thrissur, Kerala'},
+    {name:'St. Joseph\u2019s College of Engineering and Technology', place:'Palai, Kottayam, Kerala'},
+    {name:'Mangalam College of Engineering', place:'Kottayam, Kerala'},
+    {name:'Federal Institute of Science and Technology (FISAT)', place:'Angamaly, Ernakulam, Kerala'},
+    {name:'Saintgits College of Engineering', place:'Kottayam, Kerala'},
+    {name:'Toc H Institute of Science and Technology', place:'Arakkunnam, Ernakulam, Kerala'},
+    {name:'Rajiv Gandhi Institute of Technology', place:'Kottayam, Kerala'},
+    {name:'College of Engineering Chengannur', place:'Alappuzha, Kerala'},
+    {name:'College of Engineering Munnar', place:'Idukki, Kerala'},
+    {name:'College of Engineering Perumon', place:'Kollam, Kerala'},
+    {name:'Sree Buddha College of Engineering', place:'Pattoor, Alappuzha, Kerala'},
+    {name:'Cochin University of Science and Technology (CUSAT)', place:'Kochi, Kerala'},
+    {name:'National Institute of Technology Calicut (NIT-C)', place:'Kozhikode, Kerala'},
+    {name:'Indian Institute of Space Science and Technology (IIST)', place:'Thiruvananthapuram, Kerala'},
+    {name:'Government Engineering College Palakkad', place:'Sreekrishnapuram, Palakkad, Kerala'},
+    {name:'Government Model Engineering College', place:'Kochi, Kerala'},
+    {name:'College of Engineering Attingal', place:'Thiruvananthapuram, Kerala'},
+    {name:'Vimal Jyothi Engineering College', place:'Kannur, Kerala'},
+    {name:'MES College of Engineering', place:'Kuttippuram, Malappuram, Kerala'},
+    {name:'Ilahia College of Engineering and Technology', place:'Muvattupuzha, Ernakulam, Kerala'},
+    {name:'Mohandas College of Engineering and Technology', place:'Anad, Thiruvananthapuram, Kerala'},
+    {name:'SCMS School of Engineering and Technology', place:'Karukutty, Ernakulam, Kerala'},
+    {name:'Christ College of Engineering', place:'Irinjalakuda, Thrissur, Kerala'}
+  ];
+  function collegeSuggestions(q){
+    q = (q || '').trim().toLowerCase();
+    if(!q) return [];
+    var seen = {}, out = [];
+    ensureColleges().forEach(function(c){
+      if(c.name.toLowerCase().indexOf(q) === -1) return;
+      var key = c.name.toLowerCase();
+      if(seen[key]) return;
+      seen[key] = 1; out.push({name:c.name, place:c.place, id:c.id});
+    });
+    KNOWN_COLLEGE_DIRECTORY.forEach(function(c){
+      if(c.name.toLowerCase().indexOf(q) === -1) return;
+      var key = c.name.toLowerCase();
+      if(seen[key]) return;
+      seen[key] = 1; out.push({name:c.name, place:c.place, id:null});
+    });
+    return out.slice(0, 8);
+  }
+  function renderClgSuggest(q){
+    var box = $('#ef-clg-box'), items = collegeSuggestions(q);
+    if(!q.trim()){ box.hidden = true; box.innerHTML = ''; return; }
+    box.innerHTML = items.map(function(c){
+      return '<button type="button" class="acitem" data-name="' + esc(c.name) + '" data-id="' + esc(c.id || '') + '">' +
+        '<span class="acname">' + esc(c.name) + '</span>' +
+        (c.place ? '<span class="acplace">' + esc(c.place) + '</span>' : '') + '</button>';
+    }).join('') + '<div class="acnew">Can\u2019t find it? Keep typing \u2014 you can still use the name you enter.</div>';
+    $$('#ef-clg-box .acitem').forEach(function(b){
+      b.addEventListener('click', function(){
+        $('#ef-clg').value = b.getAttribute('data-name');
+        $('#ef-clg').dataset.collegeId = b.getAttribute('data-id') || '';
+        box.hidden = true; box.innerHTML = '';
+      });
+    });
+    box.hidden = items.length === 0;
+  }
+  $('#ef-clg').addEventListener('input', function(){
+    this.dataset.collegeId = '';
+    renderClgSuggest(this.value);
+  });
+  $('#ef-clg').addEventListener('blur', function(){
+    setTimeout(function(){ var b = $('#ef-clg-box'); b.hidden = true; b.innerHTML = ''; }, 150);
+  });
+  var colQuery = '', curCollegeId = null, editingCollegeId = null;
+
+  function collegeById(id){
+    var list = ensureColleges();
+    for(var i = 0; i < list.length; i++) if(list[i].id === id) return list[i];
+    return null;
+  }
+  function avgRating(list){
+    if(!list || !list.length) return 0;
+    var n = 0;
+    list.forEach(function(r){ n += r.rating; });
+    return Math.round((n / list.length) * 10) / 10;
+  }
+  function starsHTML(v){
+    var h = '<span class="stars" aria-label="' + (v || 0) + ' out of 5">';
+    for(var i = 1; i <= 5; i++) h += '<svg viewBox="0 0 24 24" class="' + (i <= Math.round(v) ? 'on' : '') + '" aria-hidden="true">' + P.star + '</svg>';
+    return h + '</span>';
+  }
+  function ratingHTML(list){
+    var v = avgRating(list), n = list ? list.length : 0;
+    return '<span class="rate">' + starsHTML(v) + (n ? '<span>' + v + ' \u00B7 ' + n + (n === 1 ? ' review' : ' reviews') + '</span>' : '<span>No reviews yet</span>') + '</span>';
+  }
+  function reviewRow(r){
+    return '<div class="rvw"><div class="top"><b>' + esc(r.name) + '</b>' + starsHTML(r.rating) +
+      '<small>' + esc(agoL(r.at)) + '</small></div><p>' + esc(r.text) + '</p></div>';
+  }
+
+  /* ----- list and search ----- */
+  function openColleges(){
+    colQuery = '';
+    $('#colSearch').value = '';
+    $('#colIntro').textContent = state.role === 'admin'
+      ? 'Colleges you add here can be searched by students and organizers. Students can review them and see the events they conduct.'
+      : state.role === 'organizer'
+        ? 'Search the colleges added by the admin and see the events each of them is conducting.'
+        : 'Search colleges added by the admin, see the events they conduct and read or write reviews.';
+    $('#colAddWrap').hidden = state.role !== 'admin';
+    renderColleges();
+    go('colleges');
+  }
+  function renderColleges(){
+    loadDB();
+    var q = colQuery.trim().toLowerCase();
+    var list = ensureColleges().slice().sort(function(a, b){ return a.name < b.name ? -1 : a.name > b.name ? 1 : 0; });
+    if(q) list = list.filter(function(c){
+      return (c.name + ' ' + c.place + ' ' + c.univ + ' ' + c.type + ' ' + (c.courses || '')).toLowerCase().indexOf(q) > -1;
+    });
+    $('#colCount').textContent = list.length ? list.length + (list.length === 1 ? ' college' : ' colleges') : '';
+    var box = $('#colList'); box.innerHTML = '';
+    if(!list.length){
+      box.innerHTML = q
+        ? emptyHTML('search', 'No colleges found', 'No college matches what you typed. Try another name, place or university.')
+        : emptyHTML('cap', 'No colleges yet', 'Colleges added by the admin will show up here.');
+      return;
+    }
+    list.forEach(function(c){
+      var evs = collegeEvents(c.id).length;
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'clg';
+      b.innerHTML = '<span class="chips"><span class="chip">' + esc(c.type) + '</span>' +
+        (evs ? '<span class="chip ok">' + evs + (evs === 1 ? ' live event' : ' live events') + '</span>' : '') + '</span>' +
+        '<b>' + esc(c.name) + '</b>' +
+        '<span class="meta"><span>' + ic('pin') + esc(c.place) + '</span><span>' + ic('cap') + esc(c.univ) + '</span></span>' +
+        ratingHTML(c.reviews);
+      b.addEventListener('click', function(){ openCollege(c.id); });
+      box.appendChild(b);
+    });
+  }
+  $('#colSearchIco').innerHTML = ic('search');
+  $('#colSearch').addEventListener('input', function(){ colQuery = this.value; renderColleges(); });
+  $('#colAdd').addEventListener('click', function(){ openAddCollege(null); });
+
+  /* ----- college details ----- */
+  function collegeEvents(cid){
+    loadDB();
+    return db.events.filter(function(e){ return e.collegeId === cid && e.status === 'live' && !isEnded(e); })
+      .sort(function(a, b){ return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; });
+  }
+  function openCollege(id){ curCollegeId = id; renderCollege(); go('college'); }
+  function renderCollege(){
+    loadDB();
+    var c = collegeById(curCollegeId), body = $('#clgBody'), foot = $('#clgFooter');
+    if(!c){ body.innerHTML = emptyHTML('cap', 'College not found', 'It may have been removed by the admin.'); foot.hidden = true; return; }
+    var revs = (c.reviews || []).slice().sort(function(a, b){ return b.at - a.at; });
+    var h = '<div class="chips"><span class="chip">' + esc(c.type) + '</span><span class="chip">' + esc(c.univ) + '</span></div>';
+    h += '<h1 style="margin-top:12px;word-break:break-word">' + esc(c.name) + '</h1>';
+    h += '<p class="muted" style="margin-top:6px">' + esc(c.place) + '</p>';
+    h += '<div style="margin-top:12px">' + ratingHTML(c.reviews) + '</div>';
+    h += '<div class="facts">' + factRow('pin', 'Place', c.place) + factRow('cap', 'University', c.univ) +
+         factRow('building', 'Type', c.type) + factRow('book', 'Courses', c.courses || 'Not listed') +
+         (c.website ? factRow('globe', 'Website', c.website) : '') + '</div>';
+    if(c.about) h += '<div class="callout"><h3>About this college</h3><p>' + esc(c.about) + '</p></div>';
+
+    var evs = collegeEvents(c.id);
+    h += '<div class="sec"><div class="sec-head"><h2>Events they are conducting</h2><span>' + evs.length + ' live</span></div><div class="list" id="clgEvents">';
+    h += evs.length ? '' : emptyHTML('zap', 'No live events', 'Events from this college will show up here once the admin approves them.');
+    h += '</div></div>';
+
+    h += '<div class="sec"><div class="sec-head"><h2>Reviews and comments</h2><span>' + revs.length + '</span></div><div class="list">';
+    h += revs.length ? revs.map(reviewRow).join('') : emptyHTML('users', 'No reviews yet', 'Student reviews about this college will show up here.');
+    h += '</div></div>';
+    body.innerHTML = h;
+
+    var box = $('#clgEvents');
+    if(box) evs.forEach(function(ev){ box.appendChild(evCard(ev, state.role === 'student' ? 'student' : 'admin')); });
+
+    var f = '';
+    if(state.role === 'student') f = '<button class="btn btn-primary" id="clgReview">Write a review</button>';
+    else if(state.role === 'admin') f = '<button class="btn btn-surface" id="clgEdit">Edit college details</button>';
+    foot.innerHTML = f;
+    foot.hidden = !f;
+    var b;
+    if((b = $('#clgReview'))) b.addEventListener('click', function(){ openReview('college', c.id, c.name); });
+    if((b = $('#clgEdit'))) b.addEventListener('click', function(){ openAddCollege(c.id); });
+  }
+
+  /* ----- add or edit a college (admin only) ----- */
+  function openAddCollege(id){
+    if(state.role !== 'admin'){ toast('Only the admin can add colleges'); return; }
+    loadDB();
+    var c = id ? collegeById(id) : null;
+    editingCollegeId = c ? c.id : null;
+    $('#acTitle').textContent = c ? 'Edit college' : 'Add a college';
+    $('#acIntro').textContent = c ? 'Update the details. Students and organizers see these details when they search.'
+      : 'Only the admin can add colleges. Students and organizers can search these details and review them.';
+    $('#acSubmit').textContent = c ? 'Save changes' : 'Save college';
+    $('#cf-name').value = c ? c.name : '';
+    $('#cf-place').value = c ? c.place : '';
+    $('#cf-univ').value = c ? c.univ : 'APJ Abdul Kalam Technological University (KTU)';
+    $('#cf-type').value = c ? c.type : 'Government';
+    $('#cf-courses').value = c ? (c.courses || '') : '';
+    $('#cf-website').value = c ? (c.website || '') : '';
+    $('#cf-about').value = c ? (c.about || '') : '';
+    ['name','place','univ','type','courses','website','about'].forEach(function(k){ fbad('c', k, ''); });
+    go('addcollege');
+  }
+  function submitCollege(){
+    if(state.role !== 'admin'){ toast('Only the admin can add colleges'); return; }
+    var name = val('cf-name').trim(), place = val('cf-place').trim(), univ = val('cf-univ').trim();
+    var type = val('cf-type'), courses = val('cf-courses').trim(), website = val('cf-website').trim(), about = val('cf-about').trim();
+    var checks = [
+      ['name', name.length >= 3 ? '' : 'Enter the college name'],
+      ['place', place ? '' : 'Enter the place and district'],
+      ['univ', univ ? '' : 'Enter the university'],
+      ['courses', courses ? '' : 'Enter the courses offered'],
+      ['about', about.length >= 10 ? '' : 'Write a few lines about this college']
+    ];
+    if(!applyChecks('c', checks)){ toast('Fix the highlighted fields'); return; }
+    loadDB();
+    var c = editingCollegeId ? collegeById(editingCollegeId) : null;
+    if(!c){
+      c = {id:uid(), reviews:[], addedAt:Date.now()};
+      ensureColleges().push(c);
+    }
+    c.name = name; c.place = place; c.univ = univ; c.type = type;
+    c.courses = courses; c.website = website; c.about = about;
+    saveDB();
+    toast(editingCollegeId ? 'College details updated' : 'College added');
+    editingCollegeId = null;
+    renderColleges();
+    goBack();
+  }
+  $('#acSubmit').addEventListener('click', submitCollege);
+
+  /* ----- reviews and comments (students only) ----- */
+  var rvSheet = $('#rvSheet'), rvTarget = null, rvRating = 0;
+  function paintStars(){
+    $$('#rvStars button').forEach(function(b){
+      var on = +b.getAttribute('data-v') <= rvRating;
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+  (function buildStars(){
+    var h = '';
+    for(var i = 1; i <= 5; i++) h += '<button type="button" data-v="' + i + '" aria-pressed="false" aria-label="' + i + ' star' + (i > 1 ? 's' : '') + '"><svg viewBox="0 0 24 24" aria-hidden="true">' + P.star + '</svg></button>';
+    $('#rvStars').innerHTML = h;
+    $$('#rvStars button').forEach(function(b){
+      b.addEventListener('click', function(){ rvRating = +b.getAttribute('data-v'); fbad('rv', 'rating', ''); paintStars(); });
+    });
+  })();
+  function openReview(kind, id, title){
+    if(state.role !== 'student'){ toast('Only students can post reviews'); return; }
+    rvTarget = {kind:kind, id:id};
+    rvRating = 0; paintStars();
+    $('#rvf-text').value = '';
+    fbad('rv', 'rating', ''); fbad('rv', 'text', '');
+    $('#rvTitle').textContent = kind === 'college' ? 'Review this college' : 'Review this event';
+    $('#rvText').textContent = 'You are posting as ' + (state.profile ? state.profile.name : 'a student') + ' about ' + title + '.';
+    rvSheet.classList.add('open');
+    setTimeout(function(){ $('#rvf-text').focus(); }, 60);
+  }
+  function closeReview(){ rvSheet.classList.remove('open'); }
+  $('#rvCancel').addEventListener('click', closeReview);
+  rvSheet.addEventListener('click', function(e){ if(e.target === rvSheet) closeReview(); });
+  $('#rvf-text').addEventListener('input', function(){ fbad('rv', 'text', ''); });
+  $('#rvConfirm').addEventListener('click', function(){
+    if(!rvTarget || !state.profile) return;
+    var text = val('rvf-text').trim();
+    var ok1 = fbad('rv', 'rating', rvRating ? '' : 'Choose a rating from 1 to 5');
+    var ok2 = fbad('rv', 'text', text ? '' : 'Write your comment');
+    if(!ok1 || !ok2) return;
+    loadDB();
+    var entry = {name:state.profile.name, email:state.profile.email, rating:rvRating, text:text, at:Date.now()};
+    if(rvTarget.kind === 'college'){
+      var c = collegeById(rvTarget.id);
+      if(!c){ closeReview(); return; }
+      if(!c.reviews) c.reviews = [];
+      c.reviews = c.reviews.filter(function(r){ return String(r.email).toLowerCase() !== entry.email.toLowerCase(); });
+      c.reviews.push(entry);
+    } else {
+      var ev = findEvent(rvTarget.id);
+      if(!ev){ closeReview(); return; }
+      if(!ev.comments) ev.comments = [];
+      ev.comments = ev.comments.filter(function(r){ return String(r.email).toLowerCase() !== entry.email.toLowerCase(); });
+      ev.comments.push(entry);
+    }
+    saveDB();
+    closeReview();
+    toast('Your review was posted');
+    if(rvTarget.kind === 'college') renderCollege(); else renderEvent();
+    renderColleges();
+  });
+
+  /* ----- event reviews shown on the event page ----- */
+  function eventReviewsHTML(ev, role){
+    var list = (ev.comments || []).slice().sort(function(a, b){ return b.at - a.at; });
+    var h = '<div class="sec"><div class="sec-head"><h2>Reviews and comments</h2><span>' + list.length + '</span></div>';
+    if(role === 'student') h += '<button class="btn btn-surface" id="evReview" style="margin-bottom:12px">Write a review or comment</button>';
+    h += '<div class="list">' + (list.length ? list.map(reviewRow).join('')
+      : emptyHTML('users', 'No reviews yet', 'Student reviews about this event will show up here.')) + '</div></div>';
+    return h;
+  }
+
+  /* ----- keep every open screen up to date (also when another tab changes the data) ----- */
+  function refreshViews(){
+    if(state.role === 'organizer') renderOrg();
+    if(state.role === 'admin') renderAdmin();
+    if(state.role === 'student'){ renderStudentEvents(); renderHome(); }
+    if(curEventId && state.role) renderEvent();
+    if(current === 'colleges') renderColleges();
+    if(current === 'college' && curCollegeId) renderCollege();
+    if(current === 'notifications') renderNotifs(); else updateBadge();
+  }
+  window.addEventListener('storage', function(e){ if(e.key === DB_KEY || e.key === null) refreshViews(); });
+
+  /* ---------- splash (3s), then move into the login screen (2s) ---------- */
+  var loginEl = $('#s-login'), orbit = $('#orbit'), slot = $('#orbitSlot');
+  function placeOrbit(instant){
+    var sr = loginEl.getBoundingClientRect(), r = slot.getBoundingClientRect();
+    if(!sr.width) return;
+    if(instant) orbit.style.transition = 'none';
+    orbit.style.setProperty('--ox', ((r.left + r.width / 2) - (sr.left + sr.width / 2)) + 'px');
+    orbit.style.setProperty('--oy', ((r.top + r.height / 2) - (sr.top + sr.height / 2)) + 'px');
+    if(instant){ void orbit.offsetWidth; orbit.style.transition = ''; }
+  }
+  function startSplash(){
+    requestAnimationFrame(function(){
+      loginEl.classList.add('go');
+      setTimeout(function(){ placeOrbit(false); loginEl.classList.add('to-login'); }, 3000);
+      setTimeout(function(){ loginEl.classList.add('ready'); }, 5000);
+    });
+  }
+  window.addEventListener('resize', function(){
+    if(loginEl.classList.contains('to-login') && loginEl.classList.contains('active')) placeOrbit(true);
+  });
+
+  /* ---------- date fields: shown as DD/MM/YYYY, chosen from a calendar ---------- */
+  var MON_L = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  function dmy(iso){
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(iso || '')) return '';
+    var p = iso.split('-');
+    return p[2] + '/' + p[1] + '/' + p[0];
+  }
+  function isoOf(y, m, d){ return y + '-' + pad(m + 1) + '-' + pad(d); }
+  var dp = {inp:null, y:0, m:0}, dpSheet = $('#dpSheet');
+  function initDateField(inp){
+    var desc = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value');
+    var btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'datebtn'; btn.id = inp.id + '-btn';
+    inp.parentNode.appendChild(btn);
+    function paint(){
+      var v = desc.get.call(inp);
+      btn.innerHTML = '<span class="' + (v ? '' : 'ph') + '">' + (v ? dmy(v) : 'DD/MM/YYYY') + '</span>' + ic('calendar');
+    }
+    Object.defineProperty(inp, 'value', {
+      configurable:true,
+      get:function(){ return desc.get.call(inp); },
+      set:function(v){ desc.set.call(inp, v == null ? '' : v); paint(); }
+    });
+    inp.focus = function(o){ btn.focus(o); };
+    var lab = document.querySelector('label[for="' + inp.id + '"]');
+    if(lab) lab.setAttribute('for', btn.id);
+    btn.addEventListener('click', function(){ openPicker(inp); });
+    paint();
+  }
+  function dpRender(){
+    var inp = dp.inp, min = inp.min || '', max = inp.max || '', cur = inp.value, today = todayStr(), y = dp.y, m = dp.m;
+    var y0 = Math.min(min ? +min.slice(0, 4) : +today.slice(0, 4) - 1, y);
+    var y1 = Math.max(max ? +max.slice(0, 4) : +today.slice(0, 4) + 5, y), yh = '', i, d;
+    for(i = y0; i <= y1; i++) yh += '<option' + (i === y ? ' selected' : '') + '>' + i + '</option>';
+    $('#dpYear').innerHTML = yh;
+    $('#dpMonth').innerHTML = MON_L.map(function(n, k){ return '<option value="' + k + '"' + (k === m ? ' selected' : '') + '>' + n + '</option>'; }).join('');
+    var first = new Date(y, m, 1).getDay(), days = new Date(y, m + 1, 0).getDate(), h = '';
+    for(i = 0; i < first; i++) h += '<span></span>';
+    for(d = 1; d <= days; d++){
+      var iso = isoOf(y, m, d), off = (min && iso < min) || (max && iso > max);
+      h += '<button type="button" data-iso="' + iso + '"' + (off ? ' disabled' : '') + (iso === today ? ' class="today"' : '') +
+        ' aria-pressed="' + (iso === cur ? 'true' : 'false') + '" aria-label="' + d + ' ' + MON_L[m] + ' ' + y + '">' + d + '</button>';
+    }
+    $('#dpGrid').innerHTML = h;
+  }
+  function openPicker(inp){
+    var t = todayStr(), v = inp.value, base = v || t;
+    if(!v && inp.min && base < inp.min) base = inp.min;
+    if(!v && inp.max && base > inp.max) base = inp.max;
+    dp.inp = inp; dp.y = +base.slice(0, 4); dp.m = +base.slice(5, 7) - 1;
+    var lab = document.querySelector('label[for="' + inp.id + '-btn"]');
+    $('#dpTitle').textContent = lab ? lab.textContent : 'Choose a date';
+    dpRender();
+    dpSheet.classList.add('open');
+  }
+  function closePicker(){ dpSheet.classList.remove('open'); }
+  function pickDate(iso){
+    var inp = dp.inp;
+    if(!inp) return;
+    inp.value = iso;
+    inp.dispatchEvent(new Event('input', {bubbles:true}));
+    inp.dispatchEvent(new Event('change', {bubbles:true}));
+    closePicker();
+  }
+  function shiftMonth(n){
+    dp.m += n;
+    if(dp.m < 0){ dp.m = 11; dp.y--; }
+    if(dp.m > 11){ dp.m = 0; dp.y++; }
+    dpRender();
+  }
+  $('#dpPrev').innerHTML = ic('back');
+  $('#dpNext').innerHTML = ic('chev');
+  $('#dpPrev').addEventListener('click', function(){ shiftMonth(-1); });
+  $('#dpNext').addEventListener('click', function(){ shiftMonth(1); });
+  $('#dpMonth').addEventListener('change', function(){ dp.m = +this.value; dpRender(); });
+  $('#dpYear').addEventListener('change', function(){ dp.y = +this.value; dpRender(); });
+  $('#dpGrid').addEventListener('click', function(e){
+    var b = e.target.closest('button[data-iso]');
+    if(b && !b.disabled) pickDate(b.getAttribute('data-iso'));
+  });
+  $('#dpClear').addEventListener('click', function(){ pickDate(''); });
+  $('#dpToday').addEventListener('click', function(){
+    var t = todayStr(), inp = dp.inp;
+    if((inp.min && t < inp.min) || (inp.max && t > inp.max)){ toast('Today is not available for this field'); return; }
+    pickDate(t);
+  });
+  $('#dpCancel').addEventListener('click', closePicker);
+  dpSheet.addEventListener('click', function(e){ if(e.target === dpSheet) closePicker(); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closePicker(); });
+  $$('input[data-datefield]').forEach(initDateField);
+
+  /* ---------- init ---------- */
+  cloudStart();
+  buildRegister();
+  buildTiles();
+  renderReminders();
+  renderSuggest();
+  renderHome();
+  updateBadge();
+  show('login');
+  startSplash();
+  if(!CLOUD.on) setTimeout(function(){ toast('Cloud sync is off. Data stays on this device.'); }, 5600);
+  try{ history.replaceState({s:'login'}, ''); }catch(e){}
+})();
+</script>
+</body>
+</html>
